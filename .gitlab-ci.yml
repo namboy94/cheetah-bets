@@ -1,0 +1,97 @@
+stages:
+  - mirror
+  - test
+  - release
+  - docstats
+  - finalize
+
+variables:
+  GITHUB_OAUTH_TOKEN: "$GITHUB_ACCESS_TOKEN"
+  GITLAB_ACCESS_TOKEN: "$GITLAB_ACCESS_TOKEN"
+  TEST_DB_PASS: "$TEST_DB_PASS"
+
+github_mirror:
+  stage: mirror
+  tags:
+    - linux-buildserver
+  script:
+    - git checkout master
+    - git pull
+    - git push git@github.com:namboy94/cheetah-bets.git master -f
+    - git checkout develop
+    - git pull
+    - git push git@github.com:namboy94/cheetah-bets.git develop -f
+
+lint:
+  stage: test
+  tags:
+    - linux-buildserver
+  script:
+    - cd .checkstyle
+    - php run.php --src ../src
+    - cd ..
+
+unittest:
+  stage: test
+  tags:
+    - linux-buildserver
+  script:
+    - composer update
+    - vendor/bin/phpunit src/test --coverage-html=coverage
+    - rsync -av coverage/ /var/www/coverage.namibsun.net/public_html/cheetah-bets --delete-before
+
+upload_release_to_github:
+  stage: release
+  only:
+    - master
+  tags:
+    - linux-buildserver
+  script:
+    - mkdir -p artifacts
+    - git clone https://gitlab.namibsun.net/namboy94/github-release-uploader.git
+    - git clone https://gitlab.namibsun.net/namboy94/changelog-reader.git
+    - python changelog-reader/changelog-reader.py -c CHANGELOG -d current_changelog
+    - python github-release-uploader/github-release-uploader.py namboy94 cheetah-bets $GITHUB_ACCESS_TOKEN
+      $(cat version) current_changelog artifacts -b master
+
+upload_release_to_gitlab:
+  stage: release
+  only:
+    - master
+  tags:
+    - linux-buildserver
+  script:
+    - mkdir -p artifacts
+    - git clone https://gitlab.namibsun.net/namboy94/gitlab-release-uploader.git
+    - git clone https://gitlab.namibsun.net/namboy94/changelog-reader.git
+    - python changelog-reader/changelog-reader.py -c CHANGELOG -d  current_changelog
+    - python gitlab-release-uploader/gitlab-release-uploader.py namboy94 cheetah-bets $GITLAB_ACCESS_TOKEN
+      $(cat version) current_changelog artifacts -b master -u https://gitlab.namibsun.net
+
+gitstats:
+  stage: docstats
+  only:
+    - master
+    - develop
+  tags:
+    - linux-buildserver
+  script:
+    - gitstats . gitstats
+    - rsync -av gitstats/ /var/www/gitstats.namibsun.net/public_html/gitstats/cheetah-bets --delete-before
+    - git_stats generate
+    - rsync -av git_stats/ /var/www/gitstats.namibsun.net/public_html/git_stats/cheetah-bets --delete-before
+
+update_html_pages:
+  stage: finalize
+  when: always
+  tags:
+    - linux-buildserver
+  script:
+    - git clone https://gitlab.namibsun.net/namboy94/html-index-generator.git
+    - cd html-index-generator
+    - python html-index-generator.py /var/www/coverage.namibsun.net/public_html
+      /var/www/coverage.namibsun.net/public_html/index.html
+    - python html-index-generator.py /var/www/docs.namibsun.net/public_html
+      /var/www/docs.namibsun.net/public_html/index.html
+    - python html-index-generator.py /var/www/gitstats.namibsun.net/public_html
+      /var/www/gitstats.namibsun.net/public_html/index.html

@@ -1,0 +1,23 @@
+{
+  "name": "namboy94/cheetah-bets",
+  "type": "library",
+  "description": "Football Bets library for PHP 7.1+",
+  "keywords": ["bets", "football", "soccer"],
+  "homepage": "https://gitlab.namibsun.net/namboy94/cheetah-bets",
+  "license": "GPLv3",
+  "authors": [
+    {
+      "name": "Hermann Krumrey",
+      "email": "hermann@krumreyh.com",
+      "homepage": "http://krumreyh.com",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": ">=7.1.0",
+    "ext-mysqli" : "*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "*"
+  }
+}

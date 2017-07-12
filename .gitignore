@@ -1,0 +1,5 @@
+.idea/
+.checkstyle/style-report
+vendor/
+composer.lock
+coverage/
