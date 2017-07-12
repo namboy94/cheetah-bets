@@ -30,6 +30,7 @@ class Match {
 
 	/**
 	 * Match constructor.
+	 * @SuppressWarnings functionMaxParameters
 	 * @param int $id: The ID of the match in the database
 	 * @param Team $homeTeam: The Home team
 	 * @param Team $awayTeam: The Away team
@@ -49,5 +50,14 @@ class Match {
 		$this->matchday = $matchday;
 		$this->kickoff = $kickoff;
 		$this->finished = $finished;
+	}
+
+	/**
+	 * Checks if a match has already started.
+	 * @SuppressWarnings showTODOs
+	 * @return bool: true if the match has started, false otherwise
+	 */
+	public function hasStarted() : bool {
+		return false;  // TODO Implement
 	}
 }

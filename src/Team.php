@@ -30,6 +30,7 @@ class Team {
 
 	/**
 	 * Team constructor.
+	 * @SuppressWarnings functionMaxParameters
 	 * @param int $id: The team ID in the database
 	 * @param string $name: The full name of the team, ex: FC Bayern München
 	 * @param string $shortname: The shortform name of the team, ex: FC Bayern

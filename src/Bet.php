@@ -32,6 +32,7 @@ class Bet {
 
 	/**
 	 * Bet constructor.
+	 * @SuppressWarnings functionMaxParameters
 	 * @param int $id: The bet's ID in the database
 	 * @param User $user: The user that submitted this bet
 	 * @param Match $match: The match on which was bet

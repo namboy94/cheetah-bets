@@ -30,6 +30,7 @@ class Goal {
 
 	/**
 	 * Goal constructor.
+	 * @SuppressWarnings functionMaxParameters
 	 * @param int $id: The ID of the goal
 	 * @param Match $match: The match in which this goal took place
 	 * @param Player $player: The player that scored this goal
