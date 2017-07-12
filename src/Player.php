@@ -28,4 +28,16 @@ namespace cheetah;
  */
 class Player {
 
+	/**
+	 * Player constructor.
+	 * @param int $id: The player's ID in the database
+	 * @param Team $team: The team affiliated with the player
+	 * @param string $name: The name of the player
+	 */
+	public function __construct(int $id, Team $team, string $name) {
+		$this->id = $id;
+		$this->team = $team;
+		$this->name = $name;
+	}
+
 }

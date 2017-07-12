@@ -28,4 +28,26 @@ namespace cheetah;
  */
 class Match {
 
+	/**
+	 * Match constructor.
+	 * @param int $id: The ID of the match in the database
+	 * @param Team $homeTeam: The Home team
+	 * @param Team $awayTeam: The Away team
+	 * @param int $matchday: The matchday on which this match was held
+	 * @param string $kickoff: The kickoff date and time
+	 * @param bool $finished: Indicates if the match is already finished or not
+	 */
+	public function __construct(int $id,
+								Team $homeTeam,
+								Team $awayTeam,
+								int $matchday,
+								string $kickoff,
+								bool $finished) {
+		$this->id = $id;
+		$this->homeTeam = $homeTeam;
+		$this->awayTeam = $awayTeam;
+		$this->matchday = $matchday;
+		$this->kickoff = $kickoff;
+		$this->finished = $finished;
+	}
 }
