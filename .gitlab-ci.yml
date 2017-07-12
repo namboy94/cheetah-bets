@@ -29,6 +29,7 @@ lint:
   script:
     - cd .checkstyle
     - php run.php --src ../src
+    - php run.php --src ../test
     - cd ..
 
 unittest:
@@ -37,7 +38,7 @@ unittest:
     - linux-buildserver
   script:
     - composer update
-    - vendor/bin/phpunit src/test --coverage-html=coverage
+    - vendor/bin/phpunit test --coverage-html=coverage
     - rsync -av coverage/ /var/www/coverage.namibsun.net/public_html/cheetah-bets --delete-before
 
 upload_release_to_github:

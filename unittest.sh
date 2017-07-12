@@ -5,5 +5,5 @@ if [ -z "$TEST_DB_PASS" ]; then
     exit 1
 fi
 
-vendor/bin/phpunit src/test --coverage-html=coverage
+vendor/bin/phpunit test --coverage-html=coverage
 firefox coverage/index.html

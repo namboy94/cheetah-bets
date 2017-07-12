@@ -15,7 +15,8 @@
   ],
   "require": {
     "php": ">=7.1.0",
-    "ext-mysqli" : "*"
+    "ext-mysqli" : "*",
+    "namboy94/welwitschi-auth": "dev-develop"
   },
   "require-dev": {
     "phpunit/phpunit": "*"
