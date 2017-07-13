@@ -36,7 +36,7 @@ unittest:
     - linux-buildserver
   script:
     - composer update
-    - ./test.sh
+    - ./unittest.sh
     - rsync -av coverage/ /var/www/coverage.namibsun.net/public_html/cheetah-bets --delete-before
 
 upload_release_to_github:
