@@ -89,6 +89,7 @@ class Bet extends Model {
 	 * @param mysqli $db: The database connection to use for further queries
 	 * @param array $row: The row to convert into a Bet object
 	 * @return Model: The generated Bet object
+	 * @SuppressWarnings docBlocks
 	 */
 	public static function fromRow(mysqli $db, array $row) : Model {
 		/** @noinspection PhpParamsInspection */

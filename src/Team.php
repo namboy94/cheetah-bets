@@ -89,6 +89,7 @@ class Team extends Model {
 	 * @param $db: A database connection for further queries
 	 * @param array $team: The row in the database
 	 * @return Model: The generated Team object
+	 * @SuppressWarnings docBlocks, checkUnusedFunctionParameters
 	 */
 	public static function fromRow(mysqli $db, array $team) : Model {
 		return new Team(

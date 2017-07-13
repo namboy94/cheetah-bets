@@ -142,12 +142,13 @@ class Match extends Model {
 	 * @param mysqli $db: The database connection used for further queries
 	 * @param array $row: An associative array containing the match data
 	 * @return Model: The generated Match object
+	 * @SuppressWarnings docBlocks
 	 */
 	public static function fromRow(mysqli $db, array $row) : Model {
 		/** @noinspection PhpParamsInspection */
 		return new Match(
 			(int)$row["id"],
-			Team::fromId ($db, (int)$row["home_id"]),
+			Team::fromId($db, (int)$row["home_id"]),
 			Team::fromId($db, (int)$row["away_id"]),
 			$row["home_ht_score"],  // Can be NULL => No Cast
 			$row["away_ht_score"],  // Can be NULL => No Cast

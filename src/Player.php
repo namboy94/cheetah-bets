@@ -71,6 +71,7 @@ class Player extends Model {
 	 * @param mysqli $db: The database connection to use for further queries
 	 * @param array $row: The database row to convert into a Player object
 	 * @return Model: The generated Player object
+	 * @SuppressWarnings docBlocks
 	 */
 	public static function fromRow(mysqli $db, array $row) : Model {
 		/** @noinspection PhpParamsInspection */

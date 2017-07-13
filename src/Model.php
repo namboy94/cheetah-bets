@@ -35,8 +35,10 @@ abstract class Model {
 	 *                     if nothing was found for the ID
 	 */
 	public static function fromId(mysqli $db, int $id) : ? Model {
-		$tableName = static::tableName();
-		$stmt = $db->prepare("SELECT * FROM $tableName WHERE id=?");
+		$stmt = $db->prepare(
+			"SELECT * FROM " . static::tableName() .
+			" WHERE id=?;"
+		);
 		$stmt->bind_param("i", $id);
 		$stmt->execute();
 		$data = $stmt->get_result()->fetch_array();

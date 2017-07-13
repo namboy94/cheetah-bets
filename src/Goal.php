@@ -113,6 +113,7 @@ class Goal extends Model {
 	 * @param array $row: The row of data from the goals table
 	 *                    as an associative array
 	 * @return Model: The generated Goal object
+	 * @SuppressWarnings docBlocks
 	 */
 	public static function fromRow(mysqli $db, array $row) : Model {
 		/** @noinspection PhpParamsInspection */
