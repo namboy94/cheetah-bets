@@ -32,53 +32,53 @@ class Match extends Model {
 	/**
 	 * @var int: The ID of the Match in the database
 	 */
-	private $id;
+	public $id;
 
 	/**
 	 * @var Team: The Home Team
 	 */
-	private $homeTeam;
+	public $homeTeam;
 
 	/**
 	 * @var Team: The Away Team
 	 */
-	private $awayTeam;
+	public $awayTeam;
 
 	/**
 	 * @var int: The Home Team's half time score
 	 */
-	private $homeHtScore;
+	public $homeHtScore;
 
 	/**
 	 * @var int: The Away Team's half time score
 	 */
-	private $awayHtScore;
+	public $awayHtScore;
 
 	/**
 	 * @var int: The Home Team's full time / current score
 	 */
-	private $homeFtScore;
+	public $homeFtScore;
 
 	/**
 	 * @var int: The Away Team's half time / current score
 	 */
-	private $awayFtScore;
+	public $awayFtScore;
 
 	/**
 	 * @var int: The match day of this match.
 	 * A value between 1 and 34 for the Bundesliga, for example
 	 */
-	private $matchday;
+	public $matchday;
 
 	/**
 	 * @var string: The kickoff time for this match
 	 */
-	private $kickoff;
+	public $kickoff;
 
 	/**
 	 * @var bool: Indicates if the match is finished or not
 	 */
-	private $finished;
+	public $finished;
 
 	/**
 	 * Match constructor.

@@ -32,27 +32,27 @@ class Team extends Model {
 	/**
 	 * @var int: The ID of the Team in the database
 	 */
-	private $id;
+	public $id;
 
 	/**
 	 * @var string: The full name of the Team
 	 */
-	private $name;
+	public $name;
 
 	/**
 	 * @var string: A shortened version of the team's name
 	 */
-	private $shortname;
+	public $shortname;
 
 	/**
 	 * @var string: A 3-character abbreviation associated with the Team
 	 */
-	private $abbreviation;
+	public $abbreviation;
 
 	/**
 	 * @var string: A path to an image of the Team's logo
 	 */
-	private $icon;
+	public $icon;
 
 	/**
 	 * Team constructor.

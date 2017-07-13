@@ -32,17 +32,17 @@ class Player extends Model {
 	/**
 	 * @var int: The ID of the player in the database
 	 */
-	private $id;
+	public $id;
 
 	/**
 	 * @var Team: The team with which the player is currently affiliated
 	 */
-	private $team;
+	public $team;
 
 	/**
 	 * @var string: The name of the player
 	 */
-	private $name;
+	public $name;
 
 	/**
 	 * Player constructor.

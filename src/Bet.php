@@ -33,27 +33,27 @@ class Bet extends Model {
 	/**
 	 * @var int: The ID of the Bet in the Database
 	 */
-	private $id;
+	public $id;
 
 	/**
 	 * @var User: The User that initiated this bet
 	 */
-	private $user;
+	public $user;
 
 	/**
 	 * @var Match: The match on which was bet
 	 */
-	private $match;
+	public $match;
 
 	/**
 	 * @var int: The score bet on the home team
 	 */
-	private $homeScore;
+	public $homeScore;
 
 	/**
 	 * @var int: The score bet on the away team
 	 */
-	private $awayScore;
+	public $awayScore;
 
 	/**
 	 * Bet constructor.

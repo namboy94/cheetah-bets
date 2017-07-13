@@ -32,42 +32,42 @@ class Goal extends Model {
 	/**
 	 * @var int: The ID of the Goal object in the database
 	 */
-	private $id;
+	public $id;
 
 	/**
 	 * @var Match: The match in which the goal occured
 	 */
-	private $match;
+	public $match;
 
 	/**
 	 * @var Player: The player that shot this goal
 	 */
-	private $player;
+	public $player;
 
 	/**
 	 * @var int: The minute in which the goal fell
 	 */
-	private $minute;
+	public $minute;
 
 	/**
 	 * @var int: The score of the home team after this goal
 	 */
-	private $homeScore;
+	public $homeScore;
 
 	/**
 	 * @var int: The score of the away team after this goal
 	 */
-	private $awayScore;
+	public $awayScore;
 
 	/**
 	 * @var bool: Indicates if this goal is a penalty or not
 	 */
-	private $penalty;
+	public $penalty;
 
 	/**
 	 * @var bool: Indicates if the goal is an own goal or not
 	 */
-	private $owngoal;
+	public $owngoal;
 
 	/**
 	 * Goal constructor.
