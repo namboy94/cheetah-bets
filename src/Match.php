@@ -31,16 +31,25 @@ class Match {
 	/**
 	 * Match constructor.
 	 * @SuppressWarnings functionMaxParameters
-	 * @param int $id: The ID of the match in the database
-	 * @param Team $homeTeam: The Home team
-	 * @param Team $awayTeam: The Away team
-	 * @param int $matchday: The matchday on which this match was held
-	 * @param string $kickoff: The kickoff date and time
-	 * @param bool $finished: Indicates if the match is already finished or not
+	 * @param int $id : The ID of the match in the database
+	 * @param Team $homeTeam : The Home team
+	 * @param Team $awayTeam : The Away team
+	 * @param int $homeHtScore: The Home team score at half time
+	 * @param int $awayHtScore: The Away team score at half time
+	 * @param int $homeFtScore: The full-time/current score of the home team
+	 * @param int $awayFtScore: The full-time/current score of the home team
+	 * @param int $matchday : The matchday on which this match was held
+	 * @param string $kickoff : The kickoff date and time
+	 * @param bool $finished : Indicates if the match is
+	 *                         already finished or not
 	 */
 	public function __construct(int $id,
 								Team $homeTeam,
 								Team $awayTeam,
+								int $homeHtScore,
+								int $awayHtScore,
+								int $homeFtScore,
+								int $awayFtScore,
 								int $matchday,
 								string $kickoff,
 								bool $finished) {
@@ -48,6 +57,10 @@ class Match {
 		$this->homeTeam = $homeTeam;
 		$this->awayTeam = $awayTeam;
 		$this->matchday = $matchday;
+		$this->homeHtScore = $homeHtScore;
+		$this->awayHtScore = $awayHtScore;
+		$this->homeFtScore = $homeFtScore;
+		$this->awayFtScore = $awayFtScore;
 		$this->kickoff = $kickoff;
 		$this->finished = $finished;
 	}

@@ -39,8 +39,8 @@ final class DatabaseTableCreationTest extends TestCase {
 			"phpunit",
 			getenv("TEST_DB_PASS"), // Uses environment variable
 			"welwitschi_auth_test");
-		$this->db->query("DROP TABLE IF EXISTS " .
-			"bets, goals, players, matches, teams, sessions, accounts");
+		//$this->db->query("DROP TABLE IF EXISTS " .
+		//	"bets, goals, players, matches, teams, sessions, accounts");
 		$this->db->commit();
 	}
 
@@ -48,8 +48,8 @@ final class DatabaseTableCreationTest extends TestCase {
 	 * Deletes any tables created during testing
 	 */
 	public function tearDown() {
-		$this->db->query("DROP TABLE IF EXISTS " .
-			"bets, goals, players, matches, teams, sessions, accounts");
+		//$this->db->query("DROP TABLE IF EXISTS " .
+		//	"bets, goals, players, matches, teams, sessions, accounts");
 		$this->db->commit();
 		$this->db->close();
 		parent::tearDown();

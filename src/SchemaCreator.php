@@ -87,12 +87,16 @@ class SchemaCreator {
 	public function createMatchesTable() {
 		$this->db->query(
 			"CREATE TABLE IF NOT EXISTS matches(" .
-			"    id INTEGER NOT NULL AUTO_INCREMENT," .
+			"    id INTEGER NOT NULL," .
 			"    home_id INTEGER NOT NULL," .
 			"    away_id INTEGER NOT NULL," .
 			"    matchday INTEGER NOT NULL," .
+			"    home_ht_score INTEGER," .
+			"    away_ht_score INTEGER," .
+			"    home_ft_score INTEGER," .
+			"    away_ft_score INTEGER," .
 			"    kickoff VARCHAR(255)," .
-			"    finished BOOLEAN," .
+			"    finished BOOLEAN NOT NULL," .
 			"    PRIMARY KEY(id)," .
 			"    FOREIGN KEY(home_id) REFERENCES teams(id)" .
 			"        ON DELETE CASCADE" .
@@ -114,7 +118,7 @@ class SchemaCreator {
 	public function createTeamsTable() {
 		$this->db->query(
 			"CREATE TABLE IF NOT EXISTS teams(" .
-			"    id INTEGER NOT NULL AUTO_INCREMENT," .
+			"    id INTEGER NOT NULL," .
 			"    name VARCHAR(128) NOT NULL," .
 			"    shortname VARCHAR(128) NOT NULL," .
 			"    abbreviation VARCHAR(128) NOT NULL," .
@@ -135,7 +139,7 @@ class SchemaCreator {
 	public function createGoalsTable() {
 		$this->db->query(
 			"CREATE TABLE IF NOT EXISTS goals(" .
-			"    id INTEGER NOT NULL AUTO_INCREMENT," .
+			"    id INTEGER NOT NULL," .
 			"    match_id INTEGER NOT NULL," .
 			"    player_id INTEGER NOT NULL," .
 			"    minute INTEGER NOT NULL," .
@@ -164,7 +168,7 @@ class SchemaCreator {
 	public function createPlayersTable() {
 		$this->db->query(
 			"CREATE TABLE IF NOT EXISTS players(" .
-			"    id INTEGER NOT NULL AUTO_INCREMENT," .
+			"    id INTEGER NOT NULL," .
 			"    team_id INTEGER NOT NULL," .
 			"    name VARCHAR(255)," .
 			"    PRIMARY KEY(id)," .

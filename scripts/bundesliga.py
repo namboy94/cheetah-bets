@@ -18,7 +18,6 @@
     along with cheetah-bets.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import sys
 import time
 import json
 import MySQLdb  # Python 3: pip install mysqlclient
@@ -108,7 +107,7 @@ def update_db():
     data = load_data()
 
     update_db_teams(data, db)
-    # update_db_matches(data, db)
+    update_db_matches(data, db)
     # update_db_goals(data, db)
 
     db.close()
@@ -132,7 +131,7 @@ def update_db_teams(data, db):
 
     for team in teams:
 
-        if not team["TeamName"] in current_data:
+        if not team["TeamId"] in current_data:
 
             try:
                 team_names = bundesliga_names[team["TeamName"]]
@@ -147,9 +146,10 @@ def update_db_teams(data, db):
 
             stmt = db.cursor()
             stmt.execute("INSERT INTO teams "
-                         "(name, shortname, abbreviation, icon) "
-                         "VALUES (%s, %s, %s, %s);",
-                         (teamname,
+                         "(id, name, shortname, abbreviation, icon) "
+                         "VALUES (%s, %s, %s, %s, %s);",
+                         (int(team["TeamId"]),
+                          teamname,
                           shortname,
                           abbreviation,
                           team["TeamIconUrl"]))
@@ -161,13 +161,13 @@ def update_db_teams(data, db):
 
 def get_current_teams(db):
     """
-    Retrieves the names of the teams currently present in the database
+    Retrieves the IDs of the teams currently present in the database
     :param db: The database connection
-    :return: A list of team names currently in the database
+    :return: A list of team IDs currently in the database
     """
 
     stmt = db.cursor()
-    stmt.execute("SELECT name FROM teams")
+    stmt.execute("SELECT id FROM teams")
     current_data = stmt.fetchall()
 
     team_names = []
@@ -177,68 +177,13 @@ def get_current_teams(db):
     return team_names
 
 
-def update_db_goals(data, db):
-
-    players = []
-
-    for day in data:
-        for match in day:
-
-            match_id = match["MatchID"]
-            goals = match["Goals"]
-
-            for goal in goals:
-                
-
-                goal_id = goal["GoalID"]
-                player_id = goal["GoalGetterID"];
-                team_one_score = goal["ScoreTeam1"]
-                team_two_score = goal["ScoreTeam2"]
-                minute = goal["MatchMinute"]
-                penalty = goal["IsPenalty"]
-                owngoal = goal["IsOwnGoal"]
-
-                invalid = False
-                params = (goal_id, match_id, player_id, team_one_score, team_two_score, minute, penalty, owngoal)
-                for param in params:
-                    if param is None:
-                        invalid = True
-                if invalid:
-                    continue
-
-                players.append((goal["GoalGetterID"], goal["GoalGetterName"]))
-                stmt = db.cursor()
-                stmt.execute("REPLACE INTO goals (id, match_id, scorer, team_one_score, team_two_score, minute, penalty, owngoal)"\
-                             "VALUES (%s, %s, %s, %s, %s, %s, %s, %s);",
-                             params)
-
-    db.commit()
-    goaldata = get_goal_data(db)
-
-    for player in players:
-
-        player_id = player[0]
-
-        if player_id == 0:
-            player_name = "Unknown"
-        else:
-            player_name = player[1]
-
-        player_goals = goaldata[player_id]
-
-        goals = len(player_goals)
-        penalties = len(list(filter(lambda x: x[0] == True, player_goals)))
-        owngoals = len(list(filter(lambda x: x[1] == True, player_goals)))
-
-        stmt = db.cursor()
-        stmt.execute("REPLACE INTO scorers (id, name, goals, penalties, owngoals)"\
-                     "VALUES (%s, %s, %s, %s, %s);",
-                     (player_id, player_name, goals, penalties, owngoals))
-
-    db.commit()
-
-
 def update_db_matches(data, db):
+    """
+    Updates the matches in the database
+    :param data: The data from openligadb.de
+    :param db: The database connection
+    :return: None
+    """
 
     committed = False
     current_data = get_current_matches(db)
@@ -309,7 +254,14 @@ def update_db_matches(data, db):
     if committed:
         db.commit()
 
+
 def get_current_matches(db):
+    """
+    Fetches the currently stored matches
+    :param db: The database connection
+    :return: A list of matches, which are themselves lists of:
+             match id, home_
+    """
     stmt = db.cursor()
     stmt.execute("SELECT id, updated FROM matches")
     current_data = stmt.fetchall()
@@ -320,6 +272,69 @@ def get_current_matches(db):
         formatted_data[match[0]] = match[1]
 
     return formatted_data
+
+
+def update_db_goals(data, db):
+    players = []
+
+    for day in data:
+        for match in day:
+
+            match_id = match["MatchID"]
+            goals = match["Goals"]
+
+            for goal in goals:
+
+                goal_id = goal["GoalID"]
+                player_id = goal["GoalGetterID"];
+                team_one_score = goal["ScoreTeam1"]
+                team_two_score = goal["ScoreTeam2"]
+                minute = goal["MatchMinute"]
+                penalty = goal["IsPenalty"]
+                owngoal = goal["IsOwnGoal"]
+
+                invalid = False
+                params = (
+                goal_id, match_id, player_id, team_one_score, team_two_score,
+                minute, penalty, owngoal)
+                for param in params:
+                    if param is None:
+                        invalid = True
+                if invalid:
+                    continue
+
+                players.append((goal["GoalGetterID"], goal["GoalGetterName"]))
+                stmt = db.cursor()
+                stmt.execute(
+                    "REPLACE INTO goals (id, match_id, scorer, team_one_score, team_two_score, minute, penalty, owngoal)" \
+                    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s);",
+                    params)
+
+    db.commit()
+    goaldata = get_goal_data(db)
+
+    for player in players:
+
+        player_id = player[0]
+
+        if player_id == 0:
+            player_name = "Unknown"
+        else:
+            player_name = player[1]
+
+        player_goals = goaldata[player_id]
+
+        goals = len(player_goals)
+        penalties = len(list(filter(lambda x: x[0] == True, player_goals)))
+        owngoals = len(list(filter(lambda x: x[1] == True, player_goals)))
+
+        stmt = db.cursor()
+        stmt.execute(
+            "REPLACE INTO scorers (id, name, goals, penalties, owngoals)" \
+            "VALUES (%s, %s, %s, %s, %s);",
+            (player_id, player_name, goals, penalties, owngoals))
+
+    db.commit()
 
 
 
