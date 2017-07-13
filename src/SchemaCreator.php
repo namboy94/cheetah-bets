@@ -119,11 +119,11 @@ class SchemaCreator {
 		$this->db->query(
 			"CREATE TABLE IF NOT EXISTS teams(" .
 			"    id INTEGER NOT NULL," .
-			"    name VARCHAR(128) NOT NULL," .
-			"    shortname VARCHAR(128) NOT NULL," .
-			"    abbreviation VARCHAR(128) NOT NULL," .
+			"    name VARCHAR(255) NOT NULL," .
+			"    shortname VARCHAR(255) NOT NULL," .
+			"    abbreviation VARCHAR(255) NOT NULL," .
 			"    icon VARCHAR(255)," .
-			"    PRIMARY KEY(id, name, shortname, abbreviation));"
+			"    PRIMARY KEY(id));"
 		);
 		$this->db->commit();
 	}
@@ -134,7 +134,7 @@ class SchemaCreator {
 	 * goals:
 	 *
 	 * | id | match_id | player_id | minute | home_score | away_score |
-	 * | penalty | own_goal |
+	 * | penalty | owngoal |
 	 */
 	public function createGoalsTable() {
 		$this->db->query(
@@ -146,7 +146,7 @@ class SchemaCreator {
 			"    home_score INTEGER NOT NULL," .
 			"    away_score INTEGER NOT NULL," .
 			"    penalty BOOLEAN NOT NULL," .
-			"    own_goal BOOLEAN NOT NULL," .
+			"    owngoal BOOLEAN NOT NULL," .
 			"    PRIMARY KEY(id)," .
 			"    FOREIGN KEY(match_id) REFERENCES matches(id)" .
 			"        ON DELETE CASCADE" .

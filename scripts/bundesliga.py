@@ -24,7 +24,6 @@ import MySQLdb  # Python 3: pip install mysqlclient
 import requests
 import argparse
 
-
 bundesliga_names = {
     "Bayern München": ("FC Bayern München", "FC Bayern", "FCB"),
     "Bayer 04 Leverkusen": ("Bayer 04 Leverkusen", "Leverkusen", "B04"),
@@ -51,29 +50,42 @@ bundesliga_names = {
 def parse_args():
     """
     Parses the command line arguments
-    :return: A tuple consisting of the database username, password and name
+    :return: The parsed arguments
     """
 
     parser = argparse.ArgumentParser()
     parser.add_argument("username", help="The username for the database")
     parser.add_argument("password", help="The password for the database")
     parser.add_argument("database", help="The database to use")
+    parser.add_argument("-s", "--season",
+                        help="Specifies the Season")
+    parser.add_argument("-l", "--league",
+                        help="Specifies the League")
+    parser.add_argument("-m", "--matchday-amount", type=int,
+                        help="Specifies the amount of matchdays in a season")
     args = parser.parse_args()
-    return args.username, args.password, args.database
+
+    # Default Values
+    if args.season is None:
+        args.season = "2017"
+    if args.league is None:
+        args.league = "bl1"
+    if args.matchday_amount is None:
+        args.matchday_amount = 34
+    return args
 
 
-def connect_db():
+def connect_db(username, password, database):
     """
     Connects the database
     :return: The initialized database connection
     """
-    username, password, database = parse_args()
     db = MySQLdb.connect("localhost", username, password, database)
 
     return db
 
 
-def load_data(season='2017', league='bl1', matchday_amount=34):
+def load_data(season="2017", league="bl1", matchday_amount=34):
     """
     This method downloads the currently available data from openligadb.de
     with default for the current Bundesliga season
@@ -94,6 +106,8 @@ def load_data(season='2017', league='bl1', matchday_amount=34):
                 matchday.append(match)
         matchdays.append(matchday)
 
+    print("Downloaded openligadb data")
+
     return matchdays
 
 
@@ -103,12 +117,13 @@ def update_db():
     :return: None
     """
 
-    db = connect_db()
-    data = load_data()
+    args = parse_args()
+    db = connect_db(args.username, args.password, args.database)
+    data = load_data(args.season, args.league, args.matchday_amount)
 
     update_db_teams(data, db)
     update_db_matches(data, db)
-    # update_db_goals(data, db)
+    update_db_goals(data, db)
 
     db.close()
 
@@ -191,7 +206,7 @@ def update_db_matches(data, db):
 
             matchday = i + 1
             match_id = match["MatchID"]
-                
+
             kickoff = match["MatchDateTimeUTC"]
             finished = match["MatchIsFinished"]
 
@@ -238,84 +253,109 @@ def update_db_matches(data, db):
 
 
 def update_db_goals(data, db):
+    """
+    Updates the goals stored in the database
+    :param data: The data from openligadb.de
+    :param db: The database connection
+    :return: None
+    """
+
     players = []
+    goals = []
 
     for day in data:
         for match in day:
 
             match_id = match["MatchID"]
-            goals = match["Goals"]
+            match_goals = match["Goals"]
 
-            for goal in goals:
+            # Sanitize Data
+            # Null values for minutes are not allowed
+            match_goals = list(filter(lambda x: x["MatchMinute"] is not None,
+                                      match_goals))
 
-                goal_id = goal["GoalID"]
-                player_id = goal["GoalGetterID"];
-                home_score = goal["ScoreTeam1"]
-                away_score = goal["ScoreTeam2"]
-                minute = goal["MatchMinute"]
-                penalty = goal["IsPenalty"]
-                owngoal = goal["IsOwnGoal"]
+            # We need to sort the goals by minute to ensure that the
+            # Order of the goals is correct
+            match_goals = list(sorted(match_goals,
+                                      key=lambda x: x["MatchMinute"]))
 
-                invalid = False
-                params = (
-                goal_id, match_id, player_id, home_score, away_score,
-                minute, penalty, owngoal)
-                for param in params:
-                    if param is None:
-                        invalid = True
-                if invalid:
+            current_home_score = 0
+            current_away_score = 0
+            home_id = match["Team1"]["TeamId"]
+            away_id = match["Team2"]["TeamId"]
+
+            for goal in match_goals:
+
+                goal_dict = {
+                    "id": goal["GoalID"],
+                    "match_id": match_id,
+                    "player_id": goal["GoalGetterID"],
+                    "home_score": goal["ScoreTeam1"],
+                    "away_score": goal["ScoreTeam2"],
+                    "minute": goal["MatchMinute"],
+                    "penalty": goal["IsPenalty"],
+                    "owngoal": goal["IsOwnGoal"]
+                }
+
+                # Non-goals will be ignored
+                if current_home_score == goal_dict["home_score"]\
+                        and current_away_score == goal_dict["away_score"]:
                     continue
 
-                players.append((goal["GoalGetterID"], goal["GoalGetterName"]))
-                stmt = db.cursor()
-                stmt.execute(
-                    "REPLACE INTO goals (id, match_id, scorer, home_score, away_score, minute, penalty, owngoal)" \
-                    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s);",
-                    params)
+                if current_home_score < goal["ScoreTeam1"]:
+                    player_team = home_id
+                    current_home_score = goal["ScoreTeam1"]
+                elif current_away_score < goal["ScoreTeam2"]:
+                    player_team = away_id
+                    current_away_score = goal["ScoreTeam2"]
+                else:
+                    player_team = 0
 
-    db.commit()
-    goaldata = get_goal_data(db)
+                player = {
+                    "id": goal["GoalGetterID"],
+                    "name": goal["GoalGetterName"].strip(),
+                    "team_id": player_team
+                }
+
+                # Unknown players will be set to their team's ID, but negative
+                if player["id"] == 0:
+                    player["id"] = -1 * player["team_id"]
+                    goal_dict["player_id"] = player["id"]
+                if not player["name"]:
+                    player["name"] = "unknown"
+
+                players.append(player)
+                goals.append(goal_dict)
 
     for player in players:
 
-        player_id = player[0]
+        stmt = db.cursor()
+        stmt.execute("INSERT INTO players (id, team_id, name) "
+                     "VALUES (%s, %s, %s) "
+                     "ON DUPLICATE KEY UPDATE team_id=%s, name=%s",
+                     (player["id"], player["team_id"], player["name"],
+                      player["team_id"], player["name"]))
 
-        if player_id == 0:
-            player_name = "Unknown"
-        else:
-            player_name = player[1]
-
-        player_goals = goaldata[player_id]
-
-        goals = len(player_goals)
-        penalties = len(list(filter(lambda x: x[0] == True, player_goals)))
-        owngoals = len(list(filter(lambda x: x[1] == True, player_goals)))
+    for goal in goals:
 
         stmt = db.cursor()
-        stmt.execute(
-            "REPLACE INTO scorers (id, name, goals, penalties, owngoals)" \
-            "VALUES (%s, %s, %s, %s, %s);",
-            (player_id, player_name, goals, penalties, owngoals))
+        stmt.execute("INSERT INTO goals "
+                     "(id, match_id, player_id, minute, "
+                     "home_score, away_score, penalty, owngoal) "
+                     "VALUES (%s, %s, %s, %s, %s, %s, %s, %s) "
+                     "ON DUPLICATE KEY UPDATE "
+                     "player_id=%s, minute=%s, "
+                     "home_score=%s, away_score=%s, "
+                     "penalty=%s, owngoal=%s",
+                     (goal["id"], goal["match_id"],
+                      goal["player_id"], goal["minute"],
+                      goal["home_score"], goal["away_score"],
+                      goal["penalty"], goal["owngoal"],
+                      goal["player_id"], goal["minute"],
+                      goal["home_score"], goal["away_score"],
+                      goal["penalty"], goal["owngoal"]))
 
     db.commit()
-
-
-
-def get_goal_data(db):
-    stmt = db.cursor()
-    stmt.execute("SELECT scorer, penalty, owngoal FROM goals")
-    current_data = stmt.fetchall()
-
-    goals = {}
-    for goal in current_data:
-        goals[goal[0]] = []
-    for goal in current_data:
-        goals[goal[0]].append((goal[1], goal[2]))
-
-    return goals
-
-
-
 
 
 if __name__ == "__main__":
