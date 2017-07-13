@@ -27,10 +27,8 @@ lint:
   tags:
     - linux-buildserver
   script:
-    - cd .checkstyle
-    - php run.php --src ../src
-    - php run.php --src ../test
-    - cd ..
+    - composer update
+    - ./lint.sh
 
 unittest:
   stage: test
@@ -38,7 +36,7 @@ unittest:
     - linux-buildserver
   script:
     - composer update
-    - vendor/bin/phpunit test --coverage-html=coverage
+    - ./test.sh
     - rsync -av coverage/ /var/www/coverage.namibsun.net/public_html/cheetah-bets --delete-before
 
 upload_release_to_github:

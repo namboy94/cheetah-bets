@@ -6,4 +6,7 @@ if [ -z "$TEST_DB_PASS" ]; then
 fi
 
 vendor/bin/phpunit test --coverage-html=coverage
-firefox coverage/index.html
+
+if [ -z "$SHOW_COVERAGE" ]; then
+    firefox coverage/index.html
+fi
