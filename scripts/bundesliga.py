@@ -185,93 +185,56 @@ def update_db_matches(data, db):
     :return: None
     """
 
-    committed = False
-    current_data = get_current_matches(db)
-
     for i, day in enumerate(data):
 
         for match in day:
 
             matchday = i + 1
             match_id = match["MatchID"]
+                
+            kickoff = match["MatchDateTimeUTC"]
+            finished = match["MatchIsFinished"]
 
-            if match["Location"] is not None:
-                match_location_city = match["Location"]["LocationCity"]
-                match_location_stadium = match["Location"]["LocationStadium"]
-            else:
-                match_location_city = "Unknown"
-                match_location_stadium = "Unknown"
-
-            match_time = match["MatchDateTimeUTC"]
-            match_finished = match["MatchIsFinished"]
-            team_one = match["Team1"]["TeamId"]
-            team_two = match["Team2"]["TeamId"]
+            home_id = match["Team1"]["TeamId"]
+            away_id = match["Team2"]["TeamId"]
 
             if len(match["MatchResults"]) > 0:
-                team_one_halftime_points = \
-                    match["MatchResults"][0]["PointsTeam1"]
-                team_two_halftime_points = \
-                    match["MatchResults"][0]["PointsTeam2"]
+                home_ht_score = match["MatchResults"][0]["PointsTeam1"]
+                away_ht_score = match["MatchResults"][0]["PointsTeam2"]
             else:
-                team_one_halftime_points = -1
-                team_two_halftime_points = -1
+                home_ht_score = None
+                away_ht_score = None
 
             if len(match["MatchResults"]) > 1:
-                team_one_points = match["MatchResults"][1]["PointsTeam1"]
-                team_two_points = match["MatchResults"][1]["PointsTeam2"]
+                home_ft_score = match["MatchResults"][1]["PointsTeam1"]
+                away_ft_score = match["MatchResults"][1]["PointsTeam2"]
             else:
-                team_one_points = -1
-                team_two_points = -1
+                home_ft_score = home_ht_score
+                away_ft_score = away_ht_score
 
-            last_update = match["LastUpdateDateTime"]
+            sql = "INSERT INTO matches " \
+                  "(id, home_id, away_id, matchday, " \
+                  "home_ht_score, away_ht_score, " \
+                  "home_ft_score, away_ft_score, " \
+                  "kickoff, finished) " \
+                  "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) " \
+                  "ON DUPLICATE KEY UPDATE " \
+                  "home_ht_score=%s, away_ht_score=%s, " \
+                  "home_ft_score=%s, away_ft_score=%s, " \
+                  "kickoff=%s, finished=%s"
 
-            sql = ""
-            variables = (match_id, matchday, match_location_city,
-                         match_location_stadium, match_time, match_finished,
-                         team_one, team_two, team_one_halftime_points,
-                         team_two_halftime_points, team_one_points,
-                         team_two_points, str(last_update))
+            variables = (match_id, home_id, away_id, matchday,
+                         home_ht_score, away_ht_score,
+                         home_ft_score, away_ft_score,
+                         kickoff, finished,
+                         home_ht_score, away_ht_score,
+                         home_ft_score, away_ft_score,
+                         kickoff, finished)
 
-            if match_id not in current_data:
-                sql = "INSERT INTO matches (id, matchday, city, stadium, "\
-                      "matchtime, finished, team_one, team_two, team_one_ht, "\
-                      "team_two_ht, team_one_ft, team_two_ft, updated) "\
-                      "VALUES (%s, %s, %s, %s, %s, "\
-                      "%s, %s, %s, %s, %s, %s, %s, %s);"
+            stmt = db.cursor()
+            stmt.execute(sql, variables)
 
-            elif current_data[match_id] != last_update:
-                sql = "UPDATE matches SET id=%s, matchday=%s, city=%s, "\
-                      "stadium=%s, matchtime=%s, finished=%s, team_one=%s, "\
-                      "team_two=%s, team_one_ht=%s, team_two_ht=%s, "\
-                      "team_one_ft=%s, team_two_ft=%s, updated=%s WHERE id=%s"
-                variables += (match_id,)
-
-            if sql != "":
-
-                stmt = db.cursor()
-                stmt.execute(sql, variables)
-                committed = True
-    if committed:
-        db.commit()
-
-
-def get_current_matches(db):
-    """
-    Fetches the currently stored matches
-    :param db: The database connection
-    :return: A list of matches, which are themselves lists of:
-             match id, home_
-    """
-    stmt = db.cursor()
-    stmt.execute("SELECT id, updated FROM matches")
-    current_data = stmt.fetchall()
-
-    formatted_data = {}
-
-    for match in current_data:
-        formatted_data[match[0]] = match[1]
-
-    return formatted_data
+    db.commit()
 
 
 def update_db_goals(data, db):
@@ -287,15 +250,15 @@ def update_db_goals(data, db):
 
                 goal_id = goal["GoalID"]
                 player_id = goal["GoalGetterID"];
-                team_one_score = goal["ScoreTeam1"]
-                team_two_score = goal["ScoreTeam2"]
+                home_score = goal["ScoreTeam1"]
+                away_score = goal["ScoreTeam2"]
                 minute = goal["MatchMinute"]
                 penalty = goal["IsPenalty"]
                 owngoal = goal["IsOwnGoal"]
 
                 invalid = False
                 params = (
-                goal_id, match_id, player_id, team_one_score, team_two_score,
+                goal_id, match_id, player_id, home_score, away_score,
                 minute, penalty, owngoal)
                 for param in params:
                     if param is None:
@@ -306,7 +269,7 @@ def update_db_goals(data, db):
                 players.append((goal["GoalGetterID"], goal["GoalGetterName"]))
                 stmt = db.cursor()
                 stmt.execute(
-                    "REPLACE INTO goals (id, match_id, scorer, team_one_score, team_two_score, minute, penalty, owngoal)" \
+                    "REPLACE INTO goals (id, match_id, scorer, home_score, away_score, minute, penalty, owngoal)" \
                     "VALUES (%s, %s, %s, %s, %s, %s, %s, %s);",
                     params)
 
