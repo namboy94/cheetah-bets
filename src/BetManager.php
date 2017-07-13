@@ -41,23 +41,22 @@ class BetManager {
 
 	/**
 	 * Retrieves all bets for a specific user
-	 * @SuppressWarnings checkInnerAssignment
 	 * @param User $user: The user for which to fetch the bets
 	 * @return array: An array of bets with the bet IDs acting as keys
+	 * @SuppressWarnings docBlocks
 	 */
 	public function getAllBetsForUser(User $user) : array {
-		$stmt = $this->db->prepare(
-			""
-		);
+		$stmt = $this->db->prepare("SELECT * FROM bets WHERE user_id=?;");
 		$stmt->bind_param("i", $user->id);
 		$stmt->execute();
 		$results = $stmt->get_result();
 
 		$bets = [];
-		while ($betRow = $results->fetch_array()) {
+		foreach ($results->fetch_all(MYSQLI_ASSOC) as $betRow) {
+			/** @noinspection PhpParamsInspection */
 			$bets[(int)$betRow["id"]] = new Bet(
 				(int)$betRow["id"], $user,
-				$this->getMatch((int)$betRow["match_id"]),
+				Match::fromId($this->db, (int)$betRow["match_id"]),
 				(int)$betRow["home_score"], (int)$betRow["away_score"]);
 		}
 

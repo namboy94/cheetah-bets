@@ -18,7 +18,6 @@
  * along with cheetah-bets.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once __DIR__ . "/../src/SchemaCreator.php";
 use cheetah\Match;
 use cheetah\Team;
 use cheetah\Goal;
