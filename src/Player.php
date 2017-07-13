@@ -77,7 +77,7 @@ class Player extends Model {
 		/** @noinspection PhpParamsInspection */
 		return new Player(
 			(int)$row["id"],
-			Team::fromId($db, (int)$row["id"]),
+			Team::fromId($db, (int)$row["team_id"]),
 			(string)$row["name"]);
 	}
 }

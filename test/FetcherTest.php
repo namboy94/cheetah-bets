@@ -21,6 +21,8 @@
 require_once __DIR__ . "/../src/SchemaCreator.php";
 use cheetah\Match;
 use cheetah\Team;
+use cheetah\Goal;
+use cheetah\Player;
 use PHPUnit\Framework\TestCase;
 use cheetah\SchemaCreator;
 
@@ -49,7 +51,7 @@ final class FetcherTest extends TestCase {
 			"cheetah_bets_test");
 		new SchemaCreator(self::$db);
 		exec("python scripts/leaguegetter.py phpunit " .
-			getenv("TEST_DB_PASS") . " cheetah_bets_test");
+			getenv("TEST_DB_PASS") . " cheetah_bets_test -s 2016");
 	}
 
 	/**
@@ -127,5 +129,33 @@ final class FetcherTest extends TestCase {
 		}
 
 		$this->assertNull(Match::fromId(self::$db, -1));
+	}
+
+	/**
+	 * Tests fetching all goals and compares them with individually fetched
+	 * goals fetched via the fromId method.
+	 */
+	public function testFetchingGoals() {
+		$goals = Goal::getAll(self::$db);
+		foreach ($goals as $goal) {
+			$individualGoal = Goal::fromId(self::$db, $goal->id);
+			/** @noinspection PhpUndefinedFieldInspection */
+			$this->assertEquals($individualGoal->player, $goal->player);
+		}
+		$this->assertNull(Goal::fromId(self::$db, -1));
+	}
+
+	/**
+	 * Tests fetching all players and compares them with individually fetched
+	 * players fetched via the fromId method.
+	 */
+	public function testFetchingPlayers() {
+		$players = Player::getAll(self::$db);
+		foreach ($players as $player) {
+			$individualPlayer = Player::fromId(self::$db, $player->id);
+			/** @noinspection PhpUndefinedFieldInspection */
+			$this->assertEquals($individualPlayer->name, $player->name);
+		}
+		$this->assertNull(Player::fromId(self::$db, 0));
 	}
 }
