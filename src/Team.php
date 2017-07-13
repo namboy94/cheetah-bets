@@ -94,7 +94,7 @@ class Team {
 
 		$teams = [];
 
-		while ($row = $result->fetch_array()) {
+		foreach ($result as $row) {
 			$teams[$row["id"]] = self::fromRow($row);
 		}
 

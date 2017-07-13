@@ -37,6 +37,7 @@ final class FetcherTest extends TestCase {
 
 	/**
 	 * Initializes the database and fills it with data
+	 * @SuppressWarnings checkProhibitedFunctions
 	 */
 	public static function setUpBeforeClass() {
 		parent::setUpBeforeClass();
@@ -46,7 +47,7 @@ final class FetcherTest extends TestCase {
 			getenv("TEST_DB_PASS"), // Uses environment variable
 			"cheetah_bets_test");
 		new SchemaCreator(self::$db);
-		system("python scripts/leaguegetter.py phpunit " .
+		exec("python scripts/leaguegetter.py phpunit " .
 			getenv("TEST_DB_PASS") . " cheetah_bets_test");
 	}
 
@@ -80,7 +81,7 @@ final class FetcherTest extends TestCase {
 	public function testFetchingTeams() {
 		$teams = Team::getAllTeams(self::$db);
 		$this->assertEquals(count($teams), 18);
-		foreach($teams as $id => $team) {
+		foreach ($teams as $id => $team) {
 			$individualTeam = Team::getTeam(self::$db, $id);
 			$this->assertNotNull($individualTeam);
 			$this->assertEquals($team->name, $individualTeam->name);
