@@ -51,44 +51,44 @@
 	<!-- **************** -->
 
 	<!-- Check Constant Naming -->
-	<test name="constantNaming" regexp="/^[A-Z][A-Z0-9_]*$/" level="error" />
+	<test level="error" name="constantNaming" regexp="/^[A-Z][A-Z0-9_]*$/"/>
 
 	<!-- Check Variable Naming -->
-	<test name="variableNaming" regexp="/^[a-z_][a-zA-Z0-9]*$/" /> <!-- default naming -->
-	<test name="topLevelVariableNaming" regexp="/^[a-z_][a-zA-Z0-9]*$/" /> <!-- for top level variables -->
-	<test name="localVariableNaming" regexp="/^[a-z_][a-zA-Z0-9]*$/" /> <!-- for local variables (inside a class) -->
-	<test name="memberVariableNaming" regexp="/^[a-z_][a-zA-Z0-9]*$/" /> <!-- for member variables (inside a function) -->
+	<test level="error" name="variableNaming" regexp="/^[a-z_][a-zA-Z0-9]*$/" /> <!-- default naming -->
+	<test level="error" name="topLevelVariableNaming" regexp="/^[a-z_][a-zA-Z0-9]*$/" /> <!-- for top level variables -->
+	<test level="error" name="localVariableNaming" regexp="/^[a-z_][a-zA-Z0-9]*$/" /> <!-- for local variables (inside a class) -->
+	<test level="error" name="memberVariableNaming" regexp="/^[a-z_][a-zA-Z0-9]*$/" /> <!-- for member variables (inside a function) -->
 
 	<!-- Check Function Naming -->
-	<test name="functionNaming" regexp="/^[a-z][a-zA-Z0-9]*$/" level="error" />
+	<test level="error" name="functionNaming" regexp="/^[a-z][a-zA-Z0-9]*$/"/>
 
 	<!-- Check Protected Naming -->
-	<test name="protectedFunctionNaming" regexp="/^[a-z][a-zA-Z0-9]*$/"
-		  level="error" />
+	<test level="error" name="protectedFunctionNaming" regexp="/^[a-z][a-zA-Z0-9]*$/"
+		  />
 
 	<!-- Check Private Function Naming -->
-	<test name="privateFunctionNaming" regexp="/^_[a-z][a-zA-Z0-9]*$/"
-		  level="error" />
+	<test level="error" name="privateFunctionNaming" regexp="/^_[a-z][a-zA-Z0-9]*$/"
+		  />
 
 	<!-- Checks the constuctor naming -->
 	<!-- old = old style (constructor = name of the class) -->
 	<!-- new = "__construct()" -->
-	<test name="constructorNaming">
+	<test level="error" name="constructorNaming">
 		<property name="naming" value="new" />
 	</test>
 
 	<!-- Check Class Naming -->
-	<test name="classNaming" regexp="/^[A-Z][a-zA-Z0-9_]*$/" level="error" />
+	<test level="error" name="classNaming" regexp="/^[A-Z][a-zA-Z0-9_]*$/" />
 
 	<!-- Check Interface Naming -->
-	<test name="interfaceNaming" regexp="/^[A-Z][a-zA-Z0-9_]*$/"
-		  level="error" />
+	<test level="error" name="interfaceNaming" regexp="/^[A-Z][a-zA-Z0-9_]*$/"
+		  />
 
 	<!-- File Naming -->
-	<test name="fileNaming" regexp="/^[a-zA-Z][a-zA-Z0-9._]*$/" level="error" />
+	<test level="error" name="fileNaming" regexp="/^[a-zA-Z][a-zA-Z0-9._]*$/" />
 
 	<!-- Short variable names -->
-	<test name="localScopeVariableLength">
+	<test level="error" name="localScopeVariableLength">
 		<property name="minLength" value="2" />
 		<property name="maxLength" value="30" />
 		<exception value="i" />  <!-- For iterators -->
@@ -102,29 +102,29 @@
 	<!-- **************** -->
 
 	<!-- Test if a short php code open tag is used (<? instead of <?php ). -->
-	<test name="noShortPhpCodeTag" />
+	<test level="error" name="noShortPhpCodeTag" />
 
 	<!-- Test if a PHP closing file is present at the end of a file -->
-	<test name="noFileCloseTag" />
+	<test level="error" name="noFileCloseTag" />
 
 	<!-- Test if a file finish with some inner HTML (OK for some view but could
 		provoque "header already sent" error) -->
-	<test name="noFileFinishHTML" level="error" />
+	<test level="error" name="noFileFinishHTML" />
 
 	<!-- PHP tags (start and stop) should be at the beginning of a line -->
-	<test name="phpTagsStartLine" />
+	<test level="error" name="phpTagsStartLine" />
 
 	<!-- **************** -->
 	<!-- Comments -->
 	<!-- **************** -->
 
 	<!-- Check if some C style comments are used (#) -->
-	<test name="noShellComments" />
+	<test level="error" name="noShellComments" />
 
 	<!-- Tests that every function and class is immediately preceded by a docblock.
 		A property "excludePrivateMembers" can be set if you want to disable docblocks
 		for private member functions. -->
-	<test name="docBlocks">
+	<test level="error" name="docBlocks">
 		<property name="excludePrivateMembers" value="true" />
 		<property name="testReturn" value="true" />
 		<property name="testParam" value="true" />
@@ -135,7 +135,7 @@
 	<!-- Check for the presence of a mandatory header (licence for exemple) -->
 	<!-- Does not take into account spaces, tabs and returns -->
 	<!-- Does not check that the content is a the beginning of the file -->
-	<!-- <test name="mandatoryHeader"> <property name="header" value=" /** *
+	<!-- <test level="error" name="mandatoryHeader"> <property name="header" value=" /** *
 		Mandatory Header. * "/> </test> -->
 
 	<!-- **************** -->
@@ -143,7 +143,7 @@
 	<!-- **************** -->
 
 	<!-- Tests to make sure that a line does not contain the tab character. -->
-	<test name="indentation">  <!-- noTabs -->
+	<test level="error" name="indentation">  <!-- noTabs -->
 		<property name="type" value="tabs" /> <!-- tabs or spaces -->
 		<property name="number" value="4" /> <!-- number of spaces if type = spaces -->
 	</test>
@@ -151,31 +151,31 @@
 	<!-- Check the position of the open curly brace in a control structure (if) -->
 	<!-- sl = same line -->
 	<!-- nl = new line -->
-	<test name="controlStructOpenCurly">
+	<test level="error" name="controlStructOpenCurly">
 		<property name="position" value="sl" />
 	</test>
 
 	<!-- Check the position of the close curly brace -->
-	<test name="controlCloseCurly" level="error" />
+	<test level="error" name="controlCloseCurly"/>
 
 	<!-- Check the position of the open curly brace after a function -->
 	<!-- sl = same line -->
 	<!-- nl = new line -->
-	<test name="funcDefinitionOpenCurly">
+	<test level="error" name="funcDefinitionOpenCurly">
 		<property name="position" value="sl" />
 	</test>
 
 	<!-- Check the position of the else -->
 	<!-- sl = same line -->
 	<!-- nl = new line -->
-	<test name="controlStructElse">
+	<test level="error" name="controlStructElse">
 		<property name="position" value="sl" />
 	</test>
 
 	<!-- **************** -->
 	<!-- Quotes -->
 	<!-- **************** -->
-	<test name="preferQuotes">
+	<test level="error" name="preferQuotes">
 		<property name="type" value="single" />
 	</test>
 
@@ -186,52 +186,52 @@
 	<!-- Tests that the control statements ("if", "else", "while", "for", etc.)
 		are followed by a space before the opening parenthesis. PEAR standard stipulates
 		this to distinguish it from function calls. -->
-	<test name="spaceAfterControlStmt" />
+	<test level="error" name="spaceAfterControlStmt" />
 
 	<!-- Check that there is no space after a function name in a function call -->
-	<test name="noSpaceAfterFunctionName" level="error"></test>
+	<test level="error" name="noSpaceAfterFunctionName"></test>
 
 	<!-- Check for the (required) presence of a white space after some tokens
 		: "," "}" "-" -->
-	<test name="checkWhiteSpaceAfter" />
+	<test level="error" name="checkWhiteSpaceAfter" />
 
 	<!-- Check for the (required) presence of a white space before some tokens
 		: "{" "-" -->
-	<test name="checkWhiteSpaceBefore">
+	<test level="error" name="checkWhiteSpaceBefore">
 		<exception value=":" />  <!-- Because of the switch/case -->
 	</test>
 
 	<!-- Check that there is no space before before some tokens : "," ";" ")"
 		"->" -->
-	<test name="noSpaceBeforeToken" level="error" />
+	<test level="error" name="noSpaceBeforeToken" />
 
 	<!-- Check that there is no space after some tokens : "!" "(" "->" -->
-	<test name="noSpaceAfterToken" level="error" />
+	<test level="error" name="noSpaceAfterToken" />
 
 	<!-- **************** -->
 	<!-- Metrics -->
 	<!-- **************** -->
 
 	<!-- Check that the lenght of the line doesn't pass the max value -->
-	<test name="lineLength" level="error">
+	<test level="error" name="lineLength" >
 		<property name="maxLineLength" value="80" />
 		<property name="checkHTMLLines" value="false" />
 	</test>
 
 	<!-- Checks that the lenght (in lines) of a function doesn't pass the max
 		value -->
-	<test name="functionLength" level="error">
+	<test level="error" name="functionLength" >
 		<property name="maxLength" value="200" />
 	</test>
 
 	<!-- Checks for excessive parameters in a function declaration -->
-	<test name="functionMaxParameters">
+	<test level="error" name="functionMaxParameters">
 		<property name="maxParameters" value="4" />
 	</test>
 
 	<!-- Check Cyclomatic Complexity -->
 	<!-- see http://www.aivosto.com/project/help/pm-complexity.html -->
-	<test name="cyclomaticComplexity">
+	<test level="error" name="cyclomaticComplexity">
 		<!-- Level raising a warning -->
 		<property name="warningLevel" value="10" />
 		<!-- Level raising an error -->
@@ -239,7 +239,7 @@
 	</test>
 
 	<!-- Check NPath Complexity -->
-	<test name="npathComplexity">
+	<test level="error" name="npathComplexity">
 		<!-- Level raising a warning -->
 		<property name="warningLevel" value="100" />
 		<!-- Level raising an error -->
@@ -252,7 +252,7 @@
 
 	<!-- Check for prohibited functions -->
 	<!-- @see http://www.php.net/manual/en/indexes.php -->
-	<test name="checkProhibitedFunctions">
+	<test level="error" name="checkProhibitedFunctions">
 		<item value="echo" />
 		<item value="system" />
 		<item value="print_r" />
@@ -274,7 +274,7 @@
 
 	<!-- Check for prohibited tokens -->
 	<!-- @see http://www.php.net/manual/en/tokens.php -->
-	<test name="checkProhibitedTokens">
+	<test level="error" name="checkProhibitedTokens">
 		<item value="T_BAD_CHARACTER" />
 		<item value="T_DECLARE" />
 		<item value="T_ENDDECLARE" />
@@ -296,14 +296,14 @@
 	</test>
 
 	<!-- Check Prohibited Keywords -->
-	<test name="checkProhibitedKeywords" level="error">
+	<test level="error" name="checkProhibitedKeywords" >
 		<!-- <item value="FORBIDDEN"/> -->
 		<!-- <item value="your prohibited keyword 2"/> -->
 	</test>
 
 	<!-- Check Prohibited Keywords Regex -->
 	<!-- Note: The regular expression must be correctly escaped -->
-	<test name="checkProhibitedKeywordsRegex" level="error">
+	<test level="error" name="checkProhibitedKeywordsRegex" >
 		<!-- <item value="/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/"/> IP ADDRESS -->
 	</test>
 
@@ -312,75 +312,75 @@
 	<!-- **************** -->
 
 	<!-- All arguments with default values should be at the end -->
-	<test name="defaultValuesOrder" />
+	<test level="error" name="defaultValuesOrder" />
 
 	<!-- Check for silenced errors before function calls (@function) -->
-	<test name="checkSilencedError">
+	<test level="error" name="checkSilencedError">
 		<exception value="rename" /> <!-- Exceptions to this rule -->
 		<exception value="mkdir" />
 		<exception value="chmod" />
 	</test>
 
 	<!-- Check for encapsed variables inside a String ("$a") -->
-	<test name="encapsedVariablesInsideString" />
+	<test level="error" name="encapsedVariablesInsideString" />
 
 	<!-- Avoid passing parameters by reference -->
-	<test name="avoidPassingReferences" />
+	<test level="error" name="avoidPassingReferences" />
 
-	<test name="showTODOs" />
+	<test level="error" name="showTODOs" />
 
 	<!-- Use boolean operators (&&) instead of logical operators (AND) -->
-	<test name="useBooleanOperators" />
+	<test level="error" name="useBooleanOperators" />
 
 	<!-- Check empty block like if ($a) {} -->
-	<test name="checkEmptyBlock">
+	<test level="error" name="checkEmptyBlock">
 		<!-- <exception value="catch"/> -->
 	</test>
 
 	<!-- Check empty statement ( ;; ) -->
-	<test name="checkEmptyStatement" />
+	<test level="error" name="checkEmptyStatement" />
 
 	<!-- Check for the presence of heredoc -->
-	<test name="checkHeredoc" />
+	<test level="error" name="checkHeredoc" />
 
 	<!-- Check for braces around code blocs (if, else, elseif, do, while, for,
 		foreach) -->
-	<test name="needBraces" />
+	<test level="error" name="needBraces" />
 
 	<!-- Switch need a default value -->
-	<test name="switchNeedDefault" />
+	<test level="error" name="switchNeedDefault" />
 
 	<!-- Switch case should have a break -->
-	<test name="switchCaseNeedBreak" />
+	<test level="error" name="switchCaseNeedBreak" />
 
 	<!-- Switch default value should be at the end -->
-	<test name="switchDefaultOrder" />
+	<test level="error" name="switchDefaultOrder" />
 
 	<!-- Avoid using unary operators (++) inside a control statement With the
 		exception of for iterators, all variable incrementation or decrementation
 		should occur in their own toplevel statement to increase readability. -->
-	<test name="checkUnaryOperator">
+	<test level="error" name="checkUnaryOperator">
 		<exception value="for" />
 	</test>
 
 	<!-- With inner assignments it is difficult to see all places where a variable
 		is set. With the exception of for iterators, all assignments should occur
 		in their own toplevel statement to increase readability. -->
-	<test name="checkInnerAssignment">
+	<test level="error" name="checkInnerAssignment">
 		<exception value="for" />
 	</test>
 
 	<!-- Only one class declaration per PHP file -->
-	<test name="oneClassPerFile" />
+	<test level="error" name="oneClassPerFile" />
 
 	<!-- Detect empty files -->
-	<test name="checkEmptyFile" />
+	<test level="error" name="checkEmptyFile" />
 
 	<!-- Avoid using variable variables -->
-	<test name="variableVariable" />
+	<test level="error" name="variableVariable" />
 
 	<!-- $this cannot be used in a static function  -->
-	<test name="thisInStatic" level="error"/>
+	<test level="error" name="thisInStatic"/>
 
 	<!-- **************** -->
 	<!-- Unused -->
@@ -388,23 +388,23 @@
 
 	<!-- Detect unused private functions (detecting unused public ones is more
 		difficult) -->
-	<test name="checkUnusedPrivateFunctions" />
+	<test level="error" name="checkUnusedPrivateFunctions" />
 
 	<!-- Detect unused variables -->
-	<test name="checkUnusedVariables" />
+	<test level="error" name="checkUnusedVariables" />
 
 	<!-- Detect unused function parameters -->
-	<test name="checkUnusedFunctionParameters" />
+	<test level="error" name="checkUnusedFunctionParameters" />
 
 	<!-- Detect unused code (after return or throw) -->
-	<test name="checkUnusedCode" />
+	<test level="error" name="checkUnusedCode" />
 
 	<!-- ******************* -->
 	<!-- Optimisation -->
 	<!-- ******************* -->
 
 	<!-- Avoid using a count/sizeof function inside a loop -->
-	<test name="functionInsideLoop" />
+	<test level="error" name="functionInsideLoop" />
 
 	<!-- ******************* -->
 	<!-- Deprecation -->
@@ -412,7 +412,7 @@
 	<!-- ******************* -->
 
 	<!-- Replace deprecated methods -->
-	<test name="checkDeprecation">
+	<test level="error" name="checkDeprecation">
 		<deprecated old="call_user_method" new="call_user_func"
 					version="4.1" />
 		<deprecated old="call_user_method_array" new="call_user_func_array"
@@ -482,14 +482,14 @@
 
 	<!-- Use only strict comparison -->
 	<!-- see : http://me.veekun.com/blog/2012/04/09/php-a-fractal-of-bad-design/ -->
-	<test name="strictCompare" />
+	<test level="error" name="strictCompare" />
 
 	<!-- ******************* -->
 	<!-- PHP Aliases -->
 	<!-- ******************* -->
 
 	<!-- Replace deprecated methods -->
-	<test name="checkAliases">
+	<test level="error" name="checkAliases">
 		<alias old="chop" new="rtrim()" />
 		<alias old="close" new="closedir()" />
 		<alias old="die" new="exit()" />
