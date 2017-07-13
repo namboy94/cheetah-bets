@@ -19,6 +19,7 @@
     "namboy94/welwitschi-auth": "dev-develop"
   },
   "require-dev": {
-    "phpunit/phpunit": "*"
+    "phpunit/phpunit": "*",
+    "phpcheckstyle/phpcheckstyle": "*"
   }
 }

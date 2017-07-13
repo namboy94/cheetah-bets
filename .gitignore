@@ -1,5 +1,5 @@
 .idea/
-.checkstyle/style-report
+style-report/
 vendor/
 composer.lock
 coverage/
