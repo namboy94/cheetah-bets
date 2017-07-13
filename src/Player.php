@@ -19,6 +19,7 @@
  */
 
 namespace cheetah;
+use mysqli;
 
 
 /**
@@ -26,7 +27,22 @@ namespace cheetah;
  * Models a player from the players table
  * @package cheetah
  */
-class Player {
+class Player extends Model {
+
+	/**
+	 * @var int: The ID of the player in the database
+	 */
+	private $id;
+
+	/**
+	 * @var Team: The team with which the player is currently affiliated
+	 */
+	private $team;
+
+	/**
+	 * @var string: The name of the player
+	 */
+	private $name;
 
 	/**
 	 * Player constructor.
@@ -41,4 +57,26 @@ class Player {
 		$this->name = $name;
 	}
 
+	/**
+	 * Defines the table name for the Player Class.
+	 * @return string: 'players'
+	 */
+	public static function tableName(): string {
+		return "players";
+	}
+
+	/**
+	 * Generates a Player object from an associative array representing a
+	 * row in the players table in the database
+	 * @param mysqli $db: The database connection to use for further queries
+	 * @param array $row: The database row to convert into a Player object
+	 * @return Model: The generated Player object
+	 */
+	public static function fromRow(mysqli $db, array $row) : Model {
+		/** @noinspection PhpParamsInspection */
+		return new Player(
+			(int)$row["id"],
+			Team::fromId($db, (int)$row["id"]),
+			(string)$row["name"]);
+	}
 }

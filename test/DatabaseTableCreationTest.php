@@ -21,6 +21,7 @@
 use PHPUnit\Framework\TestCase;
 use cheetah\SchemaCreator;
 
+
 /**
  * Class that tests the creation of the database tables required for the
  * bets library to work.

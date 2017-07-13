@@ -27,7 +27,32 @@ use mysqli;
  * Models a team from the teams table
  * @package cheetah
  */
-class Team {
+class Team extends Model {
+
+	/**
+	 * @var int: The ID of the Team in the database
+	 */
+	private $id;
+
+	/**
+	 * @var string: The full name of the Team
+	 */
+	private $name;
+
+	/**
+	 * @var string: A shortened version of the team's name
+	 */
+	private $shortname;
+
+	/**
+	 * @var string: A 3-character abbreviation associated with the Team
+	 */
+	private $abbreviation;
+
+	/**
+	 * @var string: A path to an image of the Team's logo
+	 */
+	private $icon;
 
 	/**
 	 * Team constructor.
@@ -51,53 +76,26 @@ class Team {
 	}
 
 	/**
+	 * Defines the table name for the Team Class.
+	 * @return string: 'teams'
+	 */
+	public static function tableName(): string {
+		return "teams";
+	}
+
+	/**
 	 * Generates a new Team object from a row in the database.
 	 * The row must be from the teams database table
+	 * @param $db: A database connection for further queries
 	 * @param array $team: The row in the database
-	 * @return Team: The generated Team object
+	 * @return Model: The generated Team object
 	 */
-	public static function fromRow(array $team) : Team {
-		return new Team($team["id"], $team["name"], $team["shortname"],
-			$team["abbreviation"], $team["icon"]);
-	}
-
-	/**
-	 * Fetches a team from the database using the unique team ID as an
-	 * identifier
-	 * @param mysqli $db: The database connection used to fetch the data
-	 * @param int $id : The ID to search for
-	 * @return Team|null : The retrieved Team object, or null if no team with
-	 *                     the specified ID was found
-	 */
-	public static function getTeam(mysqli $db, int $id) : ? Team {
-		$stmt = $db->prepare(
-			"SELECT * from teams WHERE id=?"
-		);
-		$stmt->bind_param("i", $id);
-		$stmt->execute();
-		$data = $stmt->get_result()->fetch_array();
-
-		if ($data === null) {
-			return null;
-		} else {
-			return self::fromRow($data);
-		}
-	}
-
-	/**
-	 * Fetches all teams currently in the database table `teams`.
-	 * @param mysqli $db: The database used to fetch the data
-	 * @return array : An array of Team objects with their database IDs as keys
-	 */
-	public static function getAllTeams(mysqli $db) : array {
-		$result = $db->query("SELECT * FROM teams;");
-
-		$teams = [];
-
-		foreach ($result as $row) {
-			$teams[$row["id"]] = self::fromRow($row);
-		}
-
-		return $teams;
+	public static function fromRow(mysqli $db, array $team) : Model {
+		return new Team(
+			(int)$team["id"],
+			(string)$team["name"],
+			(string)$team["shortname"],
+			(string)$team["abbreviation"],
+			(string)$team["icon"]);
 	}
 }

@@ -27,7 +27,58 @@ use mysqli;
  * Models a match from the matches table
  * @package cheetah
  */
-class Match {
+class Match extends Model {
+
+	/**
+	 * @var int: The ID of the Match in the database
+	 */
+	private $id;
+
+	/**
+	 * @var Team: The Home Team
+	 */
+	private $homeTeam;
+
+	/**
+	 * @var Team: The Away Team
+	 */
+	private $awayTeam;
+
+	/**
+	 * @var int: The Home Team's half time score
+	 */
+	private $homeHtScore;
+
+	/**
+	 * @var int: The Away Team's half time score
+	 */
+	private $awayHtScore;
+
+	/**
+	 * @var int: The Home Team's full time / current score
+	 */
+	private $homeFtScore;
+
+	/**
+	 * @var int: The Away Team's half time / current score
+	 */
+	private $awayFtScore;
+
+	/**
+	 * @var int: The match day of this match.
+	 * A value between 1 and 34 for the Bundesliga, for example
+	 */
+	private $matchday;
+
+	/**
+	 * @var string: The kickoff time for this match
+	 */
+	private $kickoff;
+
+	/**
+	 * @var bool: Indicates if the match is finished or not
+	 */
+	private $finished;
 
 	/**
 	 * Match constructor.
@@ -78,55 +129,34 @@ class Match {
 	}
 
 	/**
-	 * Checks if a match has already started.
-	 * @SuppressWarnings showTODOs
-	 * @return bool: true if the match has started, false otherwise
+	 * Defines the table name for the Model subclass.
+	 * @return string: The table name
 	 */
-	public function hasStarted() : bool {
-		return false;  // TODO Implement
+	public static function tableName(): string {
+		return "matches";
 	}
 
 	/**
 	 * Generate a Match object from a row of data from the
 	 * database
-	 * @param mysqli $db: The database connection used to fetch the data
+	 * @param mysqli $db: The database connection used for further queries
 	 * @param array $row: An associative array containing the match data
-	 * @return Match: The generated Match object
+	 * @return Model: The generated Match object
 	 */
-	public static function fromRow(mysqli $db, array $row) : Match {
+	public static function fromRow(mysqli $db, array $row) : Model {
+		/** @noinspection PhpParamsInspection */
 		return new Match(
 			(int)$row["id"],
-			Team::getTeam($db, (int)$row["home_id"]),
-			Team::getTeam($db, (int)$row["away_id"]),
-			$row["home_ht_score"],  // Can be NULL
-			$row["away_ht_score"],  // Can be NULL
-			$row["home_ft_score"],  // Can be NULL
-			$row["away_ft_score"],  // Can be NULL
+			Team::fromId ($db, (int)$row["home_id"]),
+			Team::fromId($db, (int)$row["away_id"]),
+			$row["home_ht_score"],  // Can be NULL => No Cast
+			$row["away_ht_score"],  // Can be NULL => No Cast
+			$row["home_ft_score"],  // Can be NULL => No Cast
+			$row["away_ft_score"],  // Can be NULL => No Cast
 			(int)$row["matchday"],
-			$row["kickoff"],        // Can be NULL
+			$row["kickoff"],        // Can be NULL => No Cast
 			(bool)$row["finished"]
 		);
-	}
-
-	/**
-	 * Fetches a specific match from the database
-	 * @param mysqli $db: The database connection used to fetch the data
-	 * @param int $id: The match ID with which to identify the match
-	 * @return Match: The retrieved match. null if no match was found
-	 */
-	public static function getMatch(mysqli $db, int $id) : ? Match {
-		$stmt = $db->prepare(
-			"SELECT * from matches WHERE id=?"
-		);
-		$stmt->bind_param("i", $id);
-		$stmt->execute();
-		$data = $stmt->get_result()->fetch_array();
-
-		if ($data === null) {
-			return null;
-		} else {
-			return self::fromRow($db, $data);
-		}
 	}
 
 	/**
@@ -135,40 +165,27 @@ class Match {
 	 * @param int $matchday: The matchday for which to fetch the Matches
 	 * @return array: An array of matches with the match IDs as keys
 	 */
-	public static function getAllMatchesForMatchday(mysqli $db, int $matchday)
-	: array {
-		$stmt = $db->prepare(
-			"SELECT * from matches WHERE matchday=?"
-		);
+	public static function getAllForMatchday(
+		mysqli $db, int $matchday): array {
+
+		$stmt = $db->prepare("SELECT * from matches WHERE matchday=?");
 		$stmt->bind_param("i", $matchday);
 		$stmt->execute();
 		$results = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
 		$matches = [];
-
 		foreach ($results as $match) {
 			$matches[(int)$match["id"]] = self::fromRow($db, $match);
 		}
-
 		return $matches;
-
 	}
 
 	/**
-	 * Retrieves all matches in the database
-	 * @param mysqli $db: The database connection used to fetch the data
-	 * @return array: An associative array of Match objects with the id as key
+	 * Checks if a match has already started.
+	 * @SuppressWarnings showTODOs
+	 * @return bool: true if the match has started, false otherwise
 	 */
-	public static function getAllMatches(mysqli $db) : array {
-		$result = $db->query("SELECT * FROM matches;")
-			->fetch_all(MYSQLI_ASSOC);
-
-		$matches = [];
-
-		foreach ($result as $match) {
-			$matches[$match["id"]] = self::fromRow($db, $match);
-		}
-
-		return $matches;
+	public function hasStarted() : bool {
+		return false;  // TODO Implement
 	}
 }

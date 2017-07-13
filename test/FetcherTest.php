@@ -24,6 +24,7 @@ use cheetah\Team;
 use PHPUnit\Framework\TestCase;
 use cheetah\SchemaCreator;
 
+
 /**
  * Class that tests the creation of the database tables required for the
  * bets library to work.
@@ -79,36 +80,40 @@ final class FetcherTest extends TestCase {
 	 * Tests fetching all teams and each team individually
 	 */
 	public function testFetchingTeams() {
-		$teams = Team::getAllTeams(self::$db);
+		$teams = Team::getAll(self::$db);
 		$this->assertEquals(count($teams), 18);
 		foreach ($teams as $id => $team) {
-			$individualTeam = Team::getTeam(self::$db, $id);
+			$individualTeam = Team::fromId(self::$db, $id);
 			$this->assertNotNull($individualTeam);
+			/** @noinspection PhpUndefinedFieldInspection */
 			$this->assertEquals($team->name, $individualTeam->name);
 		}
-		$this->assertNull(Team::getTeam(self::$db, -1));
+		$this->assertNull(Team::fromId(self::$db, -1));
 	}
 
 	/**
 	 * Tests fetching the matches in the database
 	 */
 	public function testFetchingMatches() {
-		$matches = Match::getAllMatches(self::$db);
+		$matches = Match::getAll(self::$db);
 		$this->assertEquals(count($matches), 306);
 
 		for ($i = 1; $i < 35; $i++) {
-			$matchdayMatches = Match::getAllMatchesForMatchday(self::$db, $i);
+			$matchdayMatches = Match::getAllForMatchday(self::$db, $i);
 			$this->assertEquals(count($matchdayMatches), 9);
 
 			foreach ($matchdayMatches as $id => $match) {
-				$individualMatch = Match::getMatch(self::$db, $id);
+				$individualMatch = Match::fromId(self::$db, $id);
 
 				$this->assertNotNull($individualMatch);
 
+				/** @noinspection PhpUndefinedFieldInspection */
 				$this->assertEquals(
 					$match->homeTeam->id, $individualMatch->homeTeam->id);
+				/** @noinspection PhpUndefinedFieldInspection */
 				$this->assertEquals(
 					$match->awayTeam->id, $individualMatch->awayTeam->id);
+				/** @noinspection PhpUndefinedFieldInspection */
 				$this->assertEquals(
 					$match->matchday, $individualMatch->matchday);
 
@@ -121,6 +126,6 @@ final class FetcherTest extends TestCase {
 			}
 		}
 
-		$this->assertNull(Match::getMatch(self::$db, -1));
+		$this->assertNull(Match::fromId(self::$db, -1));
 	}
 }

@@ -19,6 +19,7 @@
  */
 
 namespace cheetah;
+use mysqli;
 
 
 /**
@@ -26,7 +27,47 @@ namespace cheetah;
  * Models a goal from the goals table
  * @package cheetah
  */
-class Goal {
+class Goal extends Model {
+
+	/**
+	 * @var int: The ID of the Goal object in the database
+	 */
+	private $id;
+
+	/**
+	 * @var Match: The match in which the goal occured
+	 */
+	private $match;
+
+	/**
+	 * @var Player: The player that shot this goal
+	 */
+	private $player;
+
+	/**
+	 * @var int: The minute in which the goal fell
+	 */
+	private $minute;
+
+	/**
+	 * @var int: The score of the home team after this goal
+	 */
+	private $homeScore;
+
+	/**
+	 * @var int: The score of the away team after this goal
+	 */
+	private $awayScore;
+
+	/**
+	 * @var bool: Indicates if this goal is a penalty or not
+	 */
+	private $penalty;
+
+	/**
+	 * @var bool: Indicates if the goal is an own goal or not
+	 */
+	private $owngoal;
 
 	/**
 	 * Goal constructor.
@@ -58,4 +99,32 @@ class Goal {
 		$this->owngoal = $owngoal;
 	}
 
+	/**
+	 * Defines the table name for the Goal class.
+	 * @return string: 'goals'
+	 */
+	public static function tableName(): string {
+		return "goals";
+	}
+
+	/**
+	 * Generates a Goal object from a database row
+	 * @param mysqli $db: The database to use for additional queries
+	 * @param array $row: The row of data from the goals table
+	 *                    as an associative array
+	 * @return Model: The generated Goal object
+	 */
+	public static function fromRow(mysqli $db, array $row) : Model {
+		/** @noinspection PhpParamsInspection */
+		return new Goal(
+			(int)$row["id"],
+			Match::fromId($db, $row["match_id"]),
+			Player::fromId($db, $row["player_id"]),
+			(int)$row["minute"],
+			(int)$row["home_score"],
+			(int)$row["away_score"],
+			(bool)$row["penalty"],
+			(bool)$row["owngoal"]
+		);
+	}
 }
