@@ -183,10 +183,11 @@ class Match extends Model {
 
 	/**
 	 * Checks if a match has already started.
-	 * @SuppressWarnings showTODOs
 	 * @return bool: true if the match has started, false otherwise
 	 */
 	public function hasStarted() : bool {
-		return false;  // TODO Implement
+		$start_time = strtotime($this->kickoff);
+		$current_time = time();
+		return $current_time > $start_time;
 	}
 }

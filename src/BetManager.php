@@ -63,10 +63,9 @@ class BetManager {
 		return $bets;
 	}
 
-
-
 	/**
-	 * Places a bet on behalf of a user
+	 * Places a bet on behalf of a user without any authentication needed.
+	 * Should generally not be used from outside this class.
 	 * @param User $user: The user betting
 	 * @param Match $match: The match on which the user is betting
 	 * @param int $homeScore: The score bet on the home team
@@ -74,7 +73,7 @@ class BetManager {
 	 * @return bool: true if the bet was placed successfully, false if not.
 	 *               Bets will fail if the match has already started
 	 */
-	public function placeBet(
+	public function placeBetWithoutAuthentication(
 		User $user, Match $match, int $homeScore, int $awayScore) : bool {
 
 		if ($match->hasStarted()) {
@@ -91,6 +90,46 @@ class BetManager {
 			$stmt->execute();
 			$this->db->commit();
 			return true;
+		}
+	}
+
+	/**
+	 * Places a bet for a logged in User
+	 * @param User $user: The User that places this bet
+	 * @param Match $match: The match on which to place this bet
+	 * @param int $homeScore: The score bet on the home team
+	 * @param int $awayScore: The score bet on the away team
+	 * @return bool: true if the bet was places successfully, else false
+	 */
+	public function placeBetWithLoginSession(
+		User $user, Match $match, int $homeScore, int $awayScore) : bool {
+
+		if ($user->isLoggedIn()) {
+			return $this->placeBetWithoutAuthentication(
+				$user, $match, $homeScore, $awayScore);
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Places a bet using an API key as authentication
+	 * @param User $user: The User that places the bet
+	 * @param string $apiKey: The API Key used for authentication
+	 * @param Match $match: The match on which to bet
+	 * @param int $homeScore: The score bet on the home team
+	 * @param int $awayScore: The score bet on the away team
+	 * @return bool: true if the bet placing was successful, false otherwise
+	 */
+	public function placeBetWithApiKey(
+		User $user, string $apiKey,
+		Match $match, int $homeScore, int $awayScore) : bool {
+
+		if ($user->verifyApiKey($apiKey)) {
+			return $this->placeBetWithoutAuthentication(
+				$user, $match, $homeScore, $awayScore);
+		} else {
+			return false;
 		}
 	}
 }
