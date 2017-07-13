@@ -19,6 +19,8 @@
  */
 
 require_once __DIR__ . "/../src/SchemaCreator.php";
+use cheetah\Match;
+use cheetah\Team;
 use PHPUnit\Framework\TestCase;
 use cheetah\SchemaCreator;
 
@@ -70,5 +72,54 @@ final class FetcherTest extends TestCase {
 		$this->assertEquals(
 			self::$db->query("SELECT * FROM matches;")->num_rows, 306
 		);
+	}
+
+	/**
+	 * Tests fetching all teams and each team individually
+	 */
+	public function testFetchingTeams() {
+		$teams = Team::getAllTeams(self::$db);
+		$this->assertEquals(count($teams), 18);
+		foreach($teams as $id => $team) {
+			$individualTeam = Team::getTeam(self::$db, $id);
+			$this->assertNotNull($individualTeam);
+			$this->assertEquals($team->name, $individualTeam->name);
+		}
+		$this->assertNull(Team::getTeam(self::$db, -1));
+	}
+
+	/**
+	 * Tests fetching the matches in the database
+	 */
+	public function testFetchingMatches() {
+		$matches = Match::getAllMatches(self::$db);
+		$this->assertEquals(count($matches), 306);
+
+		for ($i = 1; $i < 35; $i++) {
+			$matchdayMatches = Match::getAllMatchesForMatchday(self::$db, $i);
+			$this->assertEquals(count($matchdayMatches), 9);
+
+			foreach ($matchdayMatches as $id => $match) {
+				$individualMatch = Match::getMatch(self::$db, $id);
+
+				$this->assertNotNull($individualMatch);
+
+				$this->assertEquals(
+					$match->homeTeam->id, $individualMatch->homeTeam->id);
+				$this->assertEquals(
+					$match->awayTeam->id, $individualMatch->awayTeam->id);
+				$this->assertEquals(
+					$match->matchday, $individualMatch->matchday);
+
+				$this->assertEquals(
+					$match->homeTeam->id, $matches[$id]->homeTeam->id);
+				$this->assertEquals(
+					$match->awayTeam->id, $matches[$id]->awayTeam->id);
+				$this->assertEquals(
+					$match->matchday, $matches[$id]->matchday);
+			}
+		}
+
+		$this->assertNull(Match::getMatch(self::$db, -1));
 	}
 }
