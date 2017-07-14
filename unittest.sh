@@ -5,5 +5,10 @@ if [ -z "$TEST_DB_PASS" ]; then
     exit 1
 fi
 
-vendor/bin/phpunit src/test --coverage-html=coverage
-firefox coverage/index.html
+vendor/bin/phpunit test --coverage-html=coverage
+
+if [ -z "$SHOW_COVERAGE" ]; then
+    echo "Not Displaying Coverage"
+else
+    firefox coverage/index.html
+fi
