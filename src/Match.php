@@ -186,8 +186,8 @@ class Match extends Model {
 	 * @return bool: true if the match has started, false otherwise
 	 */
 	public function hasStarted() : bool {
-		$start_time = strtotime($this->kickoff);
-		$current_time = time();
-		return $current_time > $start_time;
+		$startTime = strtotime($this->kickoff);
+		$currentTime = time();
+		return $currentTime > $startTime;
 	}
 }

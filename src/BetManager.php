@@ -120,6 +120,7 @@ class BetManager {
 	 * @param int $homeScore: The score bet on the home team
 	 * @param int $awayScore: The score bet on the away team
 	 * @return bool: true if the bet placing was successful, false otherwise
+	 * @SuppressWarnings functionMaxParameters
 	 */
 	public function placeBetWithApiKey(
 		User $user, string $apiKey,

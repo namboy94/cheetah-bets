@@ -101,4 +101,57 @@ class Bet extends Model {
 			(int)$row["away_score"]
 		);
 	}
+
+	/**
+	 * Evaluates the points of the bet once a match is finished.
+	 * Points are granted as follows:
+	 *     - 4 Points for the exactly correct result
+	 *     - 3 Points for the correct goal difference, 2 for draws
+	 *     - 2 Points for the correct winner
+	 * Additionally, a bonus point is granted if you have at least one of the
+	 * two scores correct.
+	 * @return int: The amount of points the user earned with this bet, for
+	 *              a maximum of 5.
+	 */
+	public function evaluate() : int {
+		if (!$this->match->finished) {
+			return 0;
+		} else {
+			$actualHome = $this->match->homeFtScore;
+			$actualAway = $this->match->awayFtScore;
+
+			// Bonus points for at least one correct score
+			if ($actualHome === $this->homeScore ||
+				$actualAway === $this->awayScore) {
+				$bonus = 1;
+			} else {
+				$bonus = 0;
+			}
+
+			if ($actualHome === $this->homeScore &&
+				$actualAway === $this->awayScore) {
+				return 4 + $bonus;  // Exact Hit
+
+			} elseif (($actualHome - $actualAway) ===
+				($this->homeScore - $this->awayScore)) {
+				if ($actualHome === $actualAway) {
+					return 2 + $bonus;  // Correct Goal Difference (Draw)
+				} else {
+					return 3 + $bonus;  // Correct goal difference
+				}
+
+			} elseif (
+				($actualHome === $actualAway &&
+					$this->awayScore === $this->homeScore) ||
+				($actualHome > $actualAway &&
+					$this->homeScore > $this->awayScore) ||
+				($actualHome < $actualAway &&
+					$this->homeScore < $this->awayScore)) {
+				return 2 + $bonus;  // Correct Winner
+
+			} else {
+				return $bonus;  // Nothing Special
+			}
+		}
+	}
 }

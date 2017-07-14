@@ -93,7 +93,7 @@ final class BettingTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		
-		# In setup for constructor test coverage
+		// In setup for constructor test coverage
 		$this->betManager = new BetManager(self::$db);
 		self::$db->query("DELETE FROM bets;");
 		self::$db->commit();
@@ -110,7 +110,7 @@ final class BettingTest extends TestCase {
 		$matches = Match::getAllForMatchday(self::$db, 1);
 		foreach ($matches as $match) {
 
-			# Override Time String to enable betting
+			// Override Time String to enable betting
 			$match->kickoff = "3000-01-01T00:00:00Z";
 
 			$this->assertTrue(
@@ -142,7 +142,7 @@ final class BettingTest extends TestCase {
 		$matches = Match::getAllForMatchday(self::$db, 1);
 		$match = array_pop($matches);
 
-		# Override Time String to enable betting
+		// Override Time String to enable betting
 		$match->kickoff = "3000-01-01T00:00:00Z";
 
 		$this->assertFalse($this->betManager->placeBetWithLoginSession(
@@ -173,7 +173,7 @@ final class BettingTest extends TestCase {
 		$matches = Match::getAllForMatchday(self::$db, 1);
 		$match = array_pop($matches);
 
-		# Override Time String to enable betting
+		// Override Time String to enable betting
 		$match->kickoff = "3000-01-01T00:00:00Z";
 
 		$this->assertFalse($this->betManager->placeBetWithApiKey(
@@ -193,6 +193,9 @@ final class BettingTest extends TestCase {
 		$this->assertEquals($bet->match->id, $match->id);
 	}
 
+	/**
+	 * Tests betting on a match that had already starte
+	 */
 	public function testBettingOnMatchWhichHasStarted() {
 
 		$matches = Match::getAllForMatchday(self::$db, 1);
@@ -201,7 +204,7 @@ final class BettingTest extends TestCase {
 		$this->assertFalse($this->betManager->placeBetWithoutAuthentication(
 			self::$userOne, $match, 1, 2));
 
-		# Override Time String to enable betting
+		// Override Time String to enable betting
 		$match->kickoff = "3000-01-01T00:00:00Z";
 
 		$this->assertTrue($this->betManager->placeBetWithoutAuthentication(
