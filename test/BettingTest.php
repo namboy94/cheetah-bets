@@ -132,6 +132,35 @@ final class BettingTest extends TestCase {
 	}
 
 	/**
+	 * Tests placing a bet with negative values
+	 */
+	public function testBettingNegativeValues() {
+		$matches = Match::getAllForMatchday(self::$db, 1);
+		$match = array_pop($matches);
+
+		// Override Time String to enable betting
+		$match->kickoff = "3000-01-01T00:00:00Z";
+
+		try {
+			$this->betManager->placeBetWithoutAuthentication(
+				self::$userOne, $match, -1, 0
+			);
+			$this->fail();
+		} catch (InvalidArgumentException $e) {
+			$this->assertEquals($e->getMessage(), "Negative Scores detected!");
+		}
+
+		try {
+			$this->betManager->placeBetWithoutAuthentication(
+				self::$userOne, $match, 0, -1
+			);
+			$this->fail();
+		} catch (InvalidArgumentException $e) {
+			$this->assertEquals($e->getMessage(), "Negative Scores detected!");
+		}
+	}
+
+	/**
 	 * Tests if the Login Authentication method works as intended
 	 */
 	public function testBettingUsingLoginMethod() {

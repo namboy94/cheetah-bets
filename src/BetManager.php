@@ -19,6 +19,7 @@
  */
 
 namespace cheetah;
+use InvalidArgumentException;
 use mysqli;
 use welwitschi\User;
 
@@ -75,6 +76,10 @@ class BetManager {
 	 */
 	public function placeBetWithoutAuthentication(
 		User $user, Match $match, int $homeScore, int $awayScore) : bool {
+
+		if ($homeScore < 0 || $awayScore < 0) {
+			throw new InvalidArgumentException("Negative Scores detected!");
+		}
 
 		if ($match->hasStarted()) {
 			return false;
