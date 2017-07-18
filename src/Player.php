@@ -46,7 +46,6 @@ class Player extends Model {
 
 	/**
 	 * Player constructor.
-	 * @SuppressWarnings functionMaxParameters
 	 * @param int $id: The player's ID in the database
 	 * @param Team $team: The team affiliated with the player
 	 * @param string $name: The name of the player
