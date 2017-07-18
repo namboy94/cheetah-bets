@@ -299,4 +299,30 @@ final class BettingTest extends TestCase {
 		$this->assertEquals($bet->awayScore, 4);
 
 	}
+
+	/**
+	 * Tests betting once more on a match.
+	 * Should update previous bet
+	 */
+	public function testDuplicateBetting() {
+		$matches = Match::getAllForMatchday(self::$db, 1);
+		$match = array_pop($matches);
+		// Override Time String to enable betting
+		$match->kickoff = "3000-01-01T00:00:00Z";
+
+		$this->betManager->placeBetWithoutAuthentication(
+			self::$userOne, $match, 2, 0
+		);
+		$this->betManager->placeBetWithoutAuthentication(
+			self::$userOne, $match, 0, 2
+		);
+
+		$bets = Bet::getAll($this->betManager->db);
+		$this->assertEquals(1, count($bets));
+		$bet = array_pop($bets);
+
+		$this->assertEquals(0, $bet->homeScore);
+		$this->assertEquals(2, $bet->awayScore);
+
+	}
 }
