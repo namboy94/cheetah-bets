@@ -1,3 +1,9 @@
+V 2.0.0:
+  - Added Season Manager
+  - Made it easier to retrieve Bets for specific matches and users
+  - Made it easier to retrieve Goals for a Match
+  - BREAKING: Bets can no longer be negative values
+  - BREAKING: Schemas were changed to avoid duplicate values
 V 1.0.0:
   - Implemented base functionality
   - Implemented Updater Script
