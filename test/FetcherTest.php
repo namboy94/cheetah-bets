@@ -157,4 +157,26 @@ final class FetcherTest extends TestCase {
 		}
 		$this->assertNull(Player::fromId(self::$db, 0));
 	}
+
+	/**
+	 * Tests fetching all goals of a match
+	 */
+	public function testFetchingGoalsForMatch() {
+
+		$matches = Match::getAllForMatchday(self::$db, 1);
+		foreach ($matches as $match) {
+			$goals = Goal::getFromMatchId(self::$db, $match->id);
+
+			// Sadly, our data may not be reliable and goals could be missing
+			$this->assertLessThanOrEqual(
+				count($goals),
+				$match->homeFtScore + $match->awayFtScore
+			);
+		}
+
+
+
+
+
+	}
 }

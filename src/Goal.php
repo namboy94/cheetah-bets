@@ -128,4 +128,26 @@ class Goal extends Model {
 			(bool)$row["owngoal"]
 		);
 	}
+
+	/**
+	 * Retrieves all goals in a match
+	 * @param mysqli $db: The database connection to use
+	 * @param int $matchId: The Match ID to search for
+	 * @return array: An array of goals that fell during the match
+	 */
+	public static function getFromMatchId(mysqli $db, int $matchId) : array {
+		$stmt = $db->prepare(
+			"SELECT * FROM goals WHERE match_id=? " .
+			"ORDER BY minute ASC;");
+
+		$stmt->bind_param("i", $matchId);
+		$stmt->execute();
+		$results = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+		$goals = [];
+		foreach ($results as $result) {
+			array_push($goals, Goal::fromRow($db, $result));
+		}
+		return $goals;
+	}
 }

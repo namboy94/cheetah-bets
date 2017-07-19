@@ -103,6 +103,52 @@ class Bet extends Model {
 	}
 
 	/**
+	 * Retrieves a Match based on a Match ID and a User ID
+	 * @param mysqli $db: The database connection to use
+	 * @param int $userId: The User ID to look for
+	 * @param int $matchId: The Match ID to look for
+	 * @return Model|null: The Bet object found for the Match, or null if no
+	 *                     match was found.
+	 */
+	public static function fromMatchAndUserId(mysqli $db,
+											int $matchId,
+											int $userId
+											) : ? Model {
+		$stmt = $db->prepare(
+			"SELECT * FROM bets WHERE match_id=? AND user_id=?;"
+		);
+		$stmt->bind_param("ii", $matchId, $userId);
+		$stmt->execute();
+		$results = $stmt->get_result();
+
+		if ($results->num_rows !== 1) {
+			return null;
+		} else {
+			$data = $results->fetch_array(MYSQLI_ASSOC);
+			return BET::fromRow($db, $data);
+		}
+	}
+
+	/**
+	 * Fetches all bets on a specific match
+	 * @param mysqli $db: The Database connection to use
+	 * @param int $matchId: The Match ID to search for
+	 * @return array: An array of Bet object that are for this Match
+	 */
+	public static function getAllForMatch(mysqli $db, int $matchId) : array {
+		$stmt = $db->prepare("SELECT * FROM bets WHERE match_id=?;");
+		$stmt->bind_param("i", $matchId);
+		$stmt->execute();
+		$results = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+		$bets = [];
+		foreach ($results as $result) {
+			array_push($bets, Bet::fromRow($db, $result));
+		}
+		return $bets;
+	}
+
+	/**
 	 * Evaluates the points of the bet once a match is finished.
 	 * Points are granted as follows:
 	 *     - 4 Points for the exactly correct result

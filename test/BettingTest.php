@@ -132,6 +132,35 @@ final class BettingTest extends TestCase {
 	}
 
 	/**
+	 * Tests placing a bet with negative values
+	 */
+	public function testBettingNegativeValues() {
+		$matches = Match::getAllForMatchday(self::$db, 1);
+		$match = array_pop($matches);
+
+		// Override Time String to enable betting
+		$match->kickoff = "3000-01-01T00:00:00Z";
+
+		try {
+			$this->betManager->placeBetWithoutAuthentication(
+				self::$userOne, $match, -1, 0
+			);
+			$this->fail();
+		} catch (InvalidArgumentException $e) {
+			$this->assertEquals($e->getMessage(), "Negative Scores detected!");
+		}
+
+		try {
+			$this->betManager->placeBetWithoutAuthentication(
+				self::$userOne, $match, 0, -1
+			);
+			$this->fail();
+		} catch (InvalidArgumentException $e) {
+			$this->assertEquals($e->getMessage(), "Negative Scores detected!");
+		}
+	}
+
+	/**
 	 * Tests if the Login Authentication method works as intended
 	 */
 	public function testBettingUsingLoginMethod() {
@@ -221,5 +250,79 @@ final class BettingTest extends TestCase {
 		$this->assertEquals($bet->match->id, $match->id);
 		/** @noinspection PhpUndefinedFieldInspection */
 		$this->assertTrue($bet->match->hasStarted());
+	}
+
+	/**
+	 * Tests fetching all bets for a match
+	 */
+	public function testGettingBetsForMatch() {
+		$matches = Match::getAllForMatchday(self::$db, 1);
+		$match = array_pop($matches);
+		// Override Time String to enable betting
+		$match->kickoff = "3000-01-01T00:00:00Z";
+
+		$bets = Bet::getAllForMatch(self::$db, $match->id);
+		$this->assertEquals(count($bets), 0);
+
+		$this->assertTrue($this->betManager->placeBetWithoutAuthentication(
+			self::$userOne, $match, 3, 4));
+		$this->assertTrue($this->betManager->placeBetWithoutAuthentication(
+			self::$userTwo, $match, 10, 5));
+
+		$bets = Bet::getAllForMatch(self::$db, $match->id);
+		$this->assertEquals(count($bets), 2);
+		$this->assertEquals($bets[0]->user->id, self::$userOne->id);
+	}
+
+	/**
+	 * Tests retrieving a bet for a user and match
+	 */
+	public function testGettingBetsForMatchAndUser() {
+		$matches = Match::getAllForMatchday(self::$db, 1);
+		$match = array_pop($matches);
+		// Override Time String to enable betting
+		$match->kickoff = "3000-01-01T00:00:00Z";
+
+		$bet = Bet::fromMatchAndUserId(
+			self::$db, $match->id, self::$userOne->id);
+		$this->assertNull($bet);
+
+		$this->assertTrue($this->betManager->placeBetWithoutAuthentication(
+			self::$userOne, $match, 3, 4));
+
+		$bet = Bet::fromMatchAndUserId(
+			self::$db, $match->id, self::$userOne->id);
+		$this->assertNotNull($bet);
+		/** @noinspection PhpUndefinedFieldInspection */
+		$this->assertEquals($bet->homeScore, 3);
+		/** @noinspection PhpUndefinedFieldInspection */
+		$this->assertEquals($bet->awayScore, 4);
+
+	}
+
+	/**
+	 * Tests betting once more on a match.
+	 * Should update previous bet
+	 */
+	public function testDuplicateBetting() {
+		$matches = Match::getAllForMatchday(self::$db, 1);
+		$match = array_pop($matches);
+		// Override Time String to enable betting
+		$match->kickoff = "3000-01-01T00:00:00Z";
+
+		$this->betManager->placeBetWithoutAuthentication(
+			self::$userOne, $match, 2, 0
+		);
+		$this->betManager->placeBetWithoutAuthentication(
+			self::$userOne, $match, 0, 2
+		);
+
+		$bets = Bet::getAll($this->betManager->db);
+		$this->assertEquals(1, count($bets));
+		$bet = array_pop($bets);
+
+		$this->assertEquals(0, $bet->homeScore);
+		$this->assertEquals(2, $bet->awayScore);
+
 	}
 }

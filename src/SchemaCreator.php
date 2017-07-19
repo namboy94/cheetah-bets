@@ -71,7 +71,8 @@ class SchemaCreator {
 			"        ON UPDATE CASCADE," .
 			"    FOREIGN KEY(match_id) REFERENCES matches(id)" .
 			"        ON DELETE CASCADE" .
-			"        ON UPDATE CASCADE);"
+			"        ON UPDATE CASCADE, " .
+			"UNIQUE (user_id, match_id));"
 		);
 		$this->db->commit();
 	}
@@ -103,7 +104,8 @@ class SchemaCreator {
 			"        ON UPDATE CASCADE," .
 			"    FOREIGN KEY(away_id) REFERENCES teams(id)" .
 			"        ON DELETE CASCADE" .
-			"        ON UPDATE CASCADE);"
+			"        ON UPDATE CASCADE," .
+			"    UNIQUE(home_id, away_id, matchday));"
 		);
 		$this->db->commit();
 	}
