@@ -99,4 +99,17 @@ class Team extends Model {
 			(string)$team["abbreviation"],
 			(string)$team["icon"]);
 	}
+
+	/**
+	 * @return array: The array representation of the Player
+	 */
+	public function toArray() : array {
+		return [
+			"id" => $this->id,
+			"name" => $this->name,
+			"shortname" => $this->shortname,
+			"abbreviation" => $this->abbreviation,
+			"icon" => $this->icon
+		];
+	}
 }

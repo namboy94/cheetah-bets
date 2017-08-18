@@ -150,4 +150,20 @@ class Goal extends Model {
 		}
 		return $goals;
 	}
+
+	/**
+	 * @return array: The array representation of the Goal
+	 */
+	public function toArray() : array {
+		return [
+			"id" => $this->id,
+			"match" => $this->match->toArray(),
+			"player" => $this->player->toArray(),
+			"minute" => $this->minute,
+			"penalty" => $this->penalty,
+			"owngoal" => $this->owngoal,
+			"home_score" => $this->homeScore,
+			"away_score" => $this->awayScore,
+		];
+	}
 }
