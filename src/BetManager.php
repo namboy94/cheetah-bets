@@ -74,8 +74,12 @@ class BetManager {
 	: array {
 		$all = $this->getAllBetsForUser($user);
 		$onMatchday = [];
-		foreach ($all as $bet_id => $bet) {
-			if ($bet->match->matchday == $matchday) {
+
+		/**
+		 * @SuppressWarnings checkUnusedVariables
+		 */
+		foreach ($all as $betId => $bet) {
+			if ($bet->match->matchday === $matchday) {
 				array_push($onMatchday, $bet);
 			}
 		}
