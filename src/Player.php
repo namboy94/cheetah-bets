@@ -79,4 +79,15 @@ class Player extends Model {
 			Team::fromId($db, (int)$row["team_id"]),
 			(string)$row["name"]);
 	}
+
+	/**
+	 * @return array: The array representation of the Match
+	 */
+	public function toArray() : array {
+		return [
+			"id" => $this->id,
+			"name" => $this->name,
+			"team" => $this->team->toArray()
+		];
+	}
 }

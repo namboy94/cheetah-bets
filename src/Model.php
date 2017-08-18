@@ -28,6 +28,14 @@ abstract class Model {
 	public abstract static function fromRow(mysqli $db, array $row) : Model;
 
 	/**
+	 * This abstract method must be implemented by any models to serialize
+	 * the data inside the Model to an array which can be used for JSON
+	 * objects
+	 * @return array
+	 */
+	public abstract function toArray() : array;
+
+	/**
 	 * Retrieves a Model object from the database based on the ID
 	 * @param mysqli $db: The database connection to use
 	 * @param int $id: The ID to search for

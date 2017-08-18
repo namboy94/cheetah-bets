@@ -190,4 +190,22 @@ class Match extends Model {
 		$currentTime = time();
 		return $currentTime > $startTime;
 	}
+
+	/**
+	 * @return array: The array representation of the Match
+	 */
+	public function toArray() : array {
+		return [
+			"id" => $this->id,
+			"home_team" => $this->homeTeam->toArray(),
+			"away_team" => $this->awayTeam->toArray(),
+			"home_ht_score" => $this->homeHtScore,
+			"away_ht_score" => $this->awayHtScore,
+			"home_ft_score" => $this->homeFtScore,
+			"away_ft_score" => $this->awayFtScore,
+			"matchday" => $this->matchday,
+			"kickoff" => $this->kickoff,
+			"finished" => $this->finished
+		];
+	}
 }

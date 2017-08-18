@@ -200,4 +200,16 @@ class Bet extends Model {
 			}
 		}
 	}
+
+	/**
+	 * @return array: The array representation of the Bet
+	 */
+	public function toArray() : array {
+		return [
+			"id" => $this->id,
+			"home_score" => $this->homeScore,
+			"away_score" => $this->awayScore,
+			"match" => $this->match->toArray()
+		];
+	}
 }
