@@ -325,4 +325,14 @@ final class BettingTest extends TestCase {
 		$this->assertEquals(2, $bet->awayScore);
 
 	}
+
+	/**
+	 * Tests retrieving all bets for a given user on a specific matchday
+	 */
+	public function testGettingAllBetsForUserAndMatchday() {
+		$this->testPlacingBets();
+		$bets = $this->betManager->getAllBetsForUserOnMatchday(
+			self::$userOne, 1);
+		$this->assertEquals(count($bets), 9);
+	}
 }

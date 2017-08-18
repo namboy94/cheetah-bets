@@ -65,6 +65,24 @@ class BetManager {
 	}
 
 	/**
+	 * Retrieves all matches for a user on a specified matchday
+	 * @param User $user: The user for which to retrieve the bets for
+	 * @param int $matchday: The matchday for which to retrieve the match for
+	 * @return array: A List of Bets that qualify for the given parameters
+	 */
+	public function getAllBetsForUserOnMatchday(User $user, int $matchday)
+	: array {
+		$all = $this->getAllBetsForUser($user);
+		$onMatchday = [];
+		foreach ($all as $bet_id => $bet) {
+			if ($bet->match->matchday == $matchday) {
+				array_push($onMatchday, $bet);
+			}
+		}
+		return $onMatchday;
+	}
+
+	/**
 	 * Places a bet on behalf of a user without any authentication needed.
 	 * Should generally not be used from outside this class.
 	 * @param User $user: The user betting
