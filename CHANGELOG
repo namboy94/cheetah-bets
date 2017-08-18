@@ -1,3 +1,5 @@
+V 2.1.0:
+  - Add method to BetManager to fetch bets for a user on a matchday
 V 2.0.1:
   - Changed welwitschi_auth dependency to master
 V 2.0.0:
