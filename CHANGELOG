@@ -1,5 +1,7 @@
+V 2.2.0:
+  - Added methods to Models to serialize them as Arrays
 V 2.1.0:
-  - Add method to BetManager to fetch bets for a user on a matchday
+  - Added method to BetManager to fetch bets for a user on a matchday
 V 2.0.1:
   - Changed welwitschi_auth dependency to master
 V 2.0.0:
