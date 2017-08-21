@@ -1,3 +1,5 @@
+V 2.2.1:
+  - Added `started` property to Match array representation
 V 2.2.0:
   - Added methods to Models to serialize them as Arrays
 V 2.1.0:

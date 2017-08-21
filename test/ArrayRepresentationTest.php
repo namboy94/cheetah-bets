@@ -134,6 +134,7 @@ class ArrayRepresentationTest extends TestCase {
 		$this->assertEquals($repr["matchday"], 1);
 		$this->assertEquals($repr["kickoff"], "2000-01-01T00:00:00Z");
 		$this->assertEquals($repr["finished"], true);
+		$this->assertEquals($repr["started"], true);
 	}
 
 	/**

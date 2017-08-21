@@ -205,7 +205,8 @@ class Match extends Model {
 			"away_ft_score" => $this->awayFtScore,
 			"matchday" => $this->matchday,
 			"kickoff" => $this->kickoff,
-			"finished" => $this->finished
+			"finished" => $this->finished,
+			"started" => $this->hasStarted()
 		];
 	}
 }
