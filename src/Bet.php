@@ -160,7 +160,7 @@ class Bet extends Model {
 	 *              a maximum of 5.
 	 */
 	public function evaluate() : int {
-		if (!$this->match->finished) {
+		if (!$this->match->hasStarted()) {
 			return 0;
 		} else {
 			$actualHome = $this->match->homeFtScore;
