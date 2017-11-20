@@ -1,3 +1,5 @@
+V 2.2.2:
+  - Adjusted project metadata
 V 2.2.1:
   - Added `started` property to Match array representation
 V 2.2.0:
