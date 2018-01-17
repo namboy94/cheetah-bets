@@ -166,4 +166,20 @@ class Goal extends Model {
 			"away_score" => $this->awayScore,
 		];
 	}
+
+	/**
+	 * @return array: The JSON array representation of the Goal
+	 */
+	public function toJsonArray() : array {
+		return [
+			"id" => $this->id,
+			"match" => $this->match->id,
+			"player" => $this->player->id,
+			"minute" => $this->minute,
+			"penalty" => $this->penalty,
+			"owngoal" => $this->owngoal,
+			"home_score" => $this->homeScore,
+			"away_score" => $this->awayScore,
+		];
+	}
 }

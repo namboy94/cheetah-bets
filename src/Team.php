@@ -112,4 +112,17 @@ class Team extends Model {
 			"icon" => $this->icon
 		];
 	}
+
+	/**
+	 * @return array: The JSON array representation of the Player
+	 */
+	public function toJsonArray() : array {
+		return [
+			"id" => $this->id,
+			"name" => $this->name,
+			"shortname" => $this->shortname,
+			"abbreviation" => $this->abbreviation,
+			"icon" => $this->icon
+		];
+	}
 }

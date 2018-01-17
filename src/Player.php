@@ -90,4 +90,15 @@ class Player extends Model {
 			"team" => $this->team->toArray()
 		];
 	}
+
+	/**
+	 * @return array: The JSON array representation of the Match
+	 */
+	public function toJsonArray() : array {
+		return [
+			"id" => $this->id,
+			"name" => $this->name,
+			"team" => $this->team->id
+		];
+	}
 }

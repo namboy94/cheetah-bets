@@ -158,4 +158,22 @@ class ArrayRepresentationTest extends TestCase {
 		$this->assertEquals($repr["abbreviation"], "A");
 		$this->assertEquals($repr["icon"], "a");
 	}
+
+	/**
+	 * Tests the various JSON representations of the models
+	 */
+	public function testJsonRepresentations() {
+		$bet = $this->bet->toJsonArray();
+		$goal = $this->goal->toJsonArray();
+		$match = $this->match->toJsonArray();
+		$player = $this->player->toJsonArray();
+		$team = $this->homeTeam->toJsonArray();
+		$this->assertEquals($bet["match"], $match["id"]);
+		$this->assertEquals($bet["points"], 0);
+		$this->assertEquals($goal["player"], $player["id"]);
+		$this->assertEquals($goal["match"], $match["id"]);
+		$this->assertEquals($match["home_team"], $team["id"]);
+		$this->assertEquals($match["away_team"], $this->awayTeam->id);
+		$this->assertEquals($player["team"], $team["id"]);
+	}
 }
