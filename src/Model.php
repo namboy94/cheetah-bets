@@ -29,11 +29,18 @@ abstract class Model {
 
 	/**
 	 * This abstract method must be implemented by any models to serialize
+	 * the data inside the Model
+	 * @return array
+	 */
+	public abstract function toArray() : array;
+
+	/**
+	 * This abstract method must be implemented by any models to serialize
 	 * the data inside the Model to an array which can be used for JSON
 	 * objects
 	 * @return array
 	 */
-	public abstract function toArray() : array;
+	public abstract function toJsonArray() : array;
 
 	/**
 	 * Retrieves a Model object from the database based on the ID

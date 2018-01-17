@@ -209,4 +209,23 @@ class Match extends Model {
 			"started" => $this->hasStarted()
 		];
 	}
+
+	/**
+	 * @return array: The JSON array representation of the Match
+	 */
+	public function toJsonArray() : array {
+		return [
+			"id" => $this->id,
+			"home_team" => $this->homeTeam->id,
+			"away_team" => $this->awayTeam->id,
+			"home_ht_score" => $this->homeHtScore,
+			"away_ht_score" => $this->awayHtScore,
+			"home_ft_score" => $this->homeFtScore,
+			"away_ft_score" => $this->awayFtScore,
+			"matchday" => $this->matchday,
+			"kickoff" => $this->kickoff,
+			"finished" => $this->finished,
+			"started" => $this->hasStarted()
+		];
+	}
 }
