@@ -102,6 +102,7 @@ class ArrayRepresentationTest extends TestCase {
 		$this->assertEquals($repr["match"], $this->match->toArray());
 		$this->assertEquals($repr["home_score"], 0);
 		$this->assertEquals($repr["away_score"], 2);
+		$this->assertEquals($repr["points"], 0);
 	}
 
 	/**
