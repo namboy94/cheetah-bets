@@ -1,3 +1,5 @@
+V 2.4.0:
+  - Added points to bet array representation
 V 2.3.0:
   - Added JSON array representations of database models
 V 2.2.2:

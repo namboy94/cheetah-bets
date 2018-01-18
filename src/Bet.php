@@ -209,7 +209,8 @@ class Bet extends Model {
 			"id" => $this->id,
 			"home_score" => $this->homeScore,
 			"away_score" => $this->awayScore,
-			"match" => $this->match->toArray()
+			"match" => $this->match->toArray(),
+			"points" => $this->evaluate()
 		];
 	}
 
