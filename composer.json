@@ -4,7 +4,7 @@
   "description": "Football Bets library for PHP 7.1+",
   "keywords": ["bets", "football", "soccer"],
   "homepage": "https://gitlab.namibsun.net/namboy94/cheetah-bets",
-  "license": "GPLv3",
+  "license": "GPL-3.0-or-later",
   "authors": [
     {
       "name": "Hermann Krumrey",
