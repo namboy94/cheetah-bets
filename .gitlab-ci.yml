@@ -1,68 +1,56 @@
 stages:
-  - mirror
   - test
+  - stats
   - release
-  - deploy
 
-github_mirror:
-  stage: mirror
-  tags:
-    - github_namboy94_push
-  script:
-    - git checkout master
-    - git pull
-    - git push git@github.com:namboy94/cheetah-bets.git master -f
-    - git checkout develop
-    - git pull
-    - git push git@github.com:namboy94/cheetah-bets.git develop -f
-
-lint:
+stylecheck:
   stage: test
   tags:
-    - php-7.1
-    - composer
+    - python3
+    - php
   script:
-    - composer update
-    - ./lint.sh
+    - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
+    - composer-checkstyle
 
 unittest:
   stage: test
   tags:
-    - composer
-    - php-7.1
+    - python3
     - progstats
-    - cheetah-bets-test-db
+    - php
+    - xdebug
+    - mysqli
   script:
-    - echo $TEST_DB_PASS > DB_PASS.secret
-    - composer update
-    - ./unittest.sh
-    - rsync -av coverage/ /var/www/progstats.namibsun.net/public/coverage/cheetah-bets --delete-before
-    - rm DB_PASS.secret
+    - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
+    - composer-unittest
 
-upload_release_to_github:
+release_upload:
   stage: release
   only:
     - master
   tags:
-    - python
-    - linux
+    - python3
   script:
-    - mkdir -p artifacts
-    - git clone https://gitlab.namibsun.net/namboy94/ci-scripts.git
-    - python ci-scripts/src/changelog-reader/changelog-reader.py -c CHANGELOG -d current_changelog
-    - python ci-scripts/src/github-release-uploader/github-release-uploader.py namboy94 cheetah-bets $GITHUB_ACCESS_TOKEN
-      $(cat version) current_changelog artifacts -b master
+    - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
+    - github-release-upload $(cat version) "$(changelog-reader)"
+    - gitlab-release-upload $(cat version) "$(changelog-reader)"
 
-upload_release_to_gitlab:
-  stage: release
-  only:
-    - master
+gitstats:
+  stage: stats
   tags:
-    - python
-    - linux
+    - python3
+    - gitstats
+    - progstats
   script:
-    - mkdir -p artifacts
-    - git clone https://gitlab.namibsun.net/namboy94/ci-scripts.git
-    - python ci-scripts/src/changelog-reader/changelog-reader.py -c CHANGELOG -d  current_changelog
-    - python ci-scripts/src/gitlab-release-uploader/gitlab-release-uploader.py namboy94 cheetah-bets $GITLAB_ACCESS_TOKEN
-      $(cat version) current_changelog artifacts -b master -u https://gitlab.namibsun.net
+    - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
+    - gitstats-gen
+
+docgen:
+  stage: stats
+  tags:
+    - python3
+    - progstats
+    - php
+  script:
+    - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
+    - composer-docgen
