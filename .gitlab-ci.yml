@@ -12,17 +12,17 @@ stylecheck:
     - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
     - composer-checkstyle
 
-unittest:
-  stage: test
-  tags:
-    - python3
-    - progstats
-    - php
-    - xdebug
-    - mysqli
-  script:
-    - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
-    - composer-unittest
+# unittest:
+#   stage: test
+#   tags:
+#     - python3
+#     - progstats
+#     - php
+#     - xdebug
+#     - mysqli
+#   script:
+#     - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
+#     - composer-unittest
 
 release_upload:
   stage: release
